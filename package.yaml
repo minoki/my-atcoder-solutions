@@ -1,0 +1,34 @@
+name:                atcoder
+version:             0.1.0.0
+github:              "minoki/atcoder"
+license:             BSD3
+author:              "ARATA Mizuki"
+maintainer:          "minorinoki@gmail.com"
+copyright:           "2019 ARATA Mizuki"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/minoki/atcoder#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- array
+- vector
+
+executables:
+  tdpc-a:
+    main:                Main.hs
+    source-dirs:         tdpc-a
+
+  tdpc-b:
+    main:                Main.hs
+    source-dirs:         tdpc-b
