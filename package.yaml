@@ -23,6 +23,7 @@ dependencies:
 - base >= 4.7 && < 5
 - array
 - vector
+- containers
 
 executables:
   tdpc-a:
@@ -36,3 +37,7 @@ executables:
   tdpc-c:
     main:                Main.hs
     source-dirs:         tdpc-c
+
+  tdpc-d:
+    main:                Main.hs
+    source-dirs:         tdpc-d
