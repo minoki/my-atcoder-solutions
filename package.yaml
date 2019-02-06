@@ -41,3 +41,7 @@ executables:
   tdpc-d:
     main:                Main.hs
     source-dirs:         tdpc-d
+
+  tdpc-e:
+    main:                Main.hs
+    source-dirs:         tdpc-e
