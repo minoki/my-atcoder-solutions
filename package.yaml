@@ -45,3 +45,7 @@ executables:
   tdpc-e:
     main:                Main.hs
     source-dirs:         tdpc-e
+
+  tdpc-f:
+    main:                Main.hs
+    source-dirs:         tdpc-f
