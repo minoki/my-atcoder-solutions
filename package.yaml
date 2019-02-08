@@ -24,6 +24,7 @@ dependencies:
 - array
 - vector
 - containers
+- mtl
 
 executables:
   tdpc-a:

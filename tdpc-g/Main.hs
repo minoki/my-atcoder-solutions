@@ -1,11 +1,15 @@
 {-# LANGUAGE BangPatterns #-}
 import Control.Monad
+import Control.Monad.Reader
 import Data.Int
 import Data.List
 import Data.Char
 import Data.Bits
+import qualified Data.IntMap.Strict as M
+import qualified Data.Vector.Mutable as V
+import Debug.Trace
 
-newtype AlphabetSet = AlphabetSet Word deriving (Eq)
+newtype AlphabetSet = AlphabetSet Int deriving (Eq)
 
 emptyAS :: AlphabetSet
 emptyAS = AlphabetSet 0
@@ -22,27 +26,43 @@ toStringAS (AlphabetSet s) = loop s 'a'
 instance Show AlphabetSet where
   show = show . toStringAS
 
-allOccurrencesNotIn :: String -> AlphabetSet -> [(Char, String)]
-allOccurrencesNotIn [] _ = []
-allOccurrencesNotIn (x:xs) e | x `elemAS` e = allOccurrencesNotIn xs e
-                             | otherwise = (x,xs) : allOccurrencesNotIn xs e
+allOccurrencesNotIn :: Int -> String -> AlphabetSet -> [(Char, Int, String)]
+allOccurrencesNotIn !i [] _ = []
+allOccurrencesNotIn !i (x:xs) e | x `elemAS` e = allOccurrencesNotIn (i+1) xs e
+                                | otherwise = (x,i+1,xs) : allOccurrencesNotIn (i+1) xs e
 
-numberOfSubstringsX :: AlphabetSet -> String -> Int64
-numberOfSubstringsX !e [] = 1
-numberOfSubstringsX !e (x:xs) | x `elemAS` e = numberOfSubstringsX e xs
-                              | otherwise = numberOfSubstringsX emptyAS xs + numberOfSubstringsX (insertAS x e) xs
+type Memo a = ReaderT (V.IOVector (M.IntMap Integer)) IO a
 
-lexIndexX :: Int64 -> AlphabetSet -> String -> Maybe String
-lexIndexX 0 !e !s = Just ""
-lexIndexX !i !e !s = case allOccurrencesNotIn s e of
-                       [] -> Nothing
-                       t@(_:_) -> let (x,xs) = minimumBy (\x y -> compare (fst x) (fst y)) t
-                                      n = numberOfSubstringsX emptyAS xs
-                                  in if i <= n
-                                     then case lexIndexX (i - 1) emptyAS xs of
-                                            Just t -> Just (x:t)
-                                            Nothing -> error "impossible"
-                                     else lexIndexX (i - n) (insertAS x e) s
+numberOfSubstringsX :: AlphabetSet -> Int -> String -> Memo Integer
+numberOfSubstringsX !e !i [] = return 1
+numberOfSubstringsX !e@(AlphabetSet ex) !i s = do
+  arr <- ask
+  m <- V.read arr i
+  case M.lookup ex m of
+    Just v -> return v
+    Nothing -> do v <- loop e i s
+                  -- if v < 0 then traceShow (e,i,s,v) $ error "numberOfSubstringsX: impossible" else return ()
+                  V.write arr i (M.insert ex v m)
+                  return v
+  where
+    loop !e !i (x:xs) | x `elemAS` e = numberOfSubstringsX e (i+1) xs
+                      | otherwise = liftM2 (+) (numberOfSubstringsX emptyAS (i+1) xs) (numberOfSubstringsX (insertAS x e) (i+1) xs)
+
+lexIndexX :: Integer -> AlphabetSet -> Int -> String -> Memo (Maybe String)
+lexIndexX 0 !e !j !s = return (Just "")
+lexIndexX !i !e !j !s
+  | i > 0 = case allOccurrencesNotIn j s e of
+              [] -> return Nothing
+              t@(_:_) -> do
+                let (x,j',xs) = minimumBy (\(x,_,_) (y,_,_) -> compare x y) t
+                n <- numberOfSubstringsX emptyAS j' xs
+                if i <= n
+                  then do v <- lexIndexX (i - 1) emptyAS j' xs
+                          case v of
+                            Just t -> return (Just (x:t))
+                            Nothing -> traceShow (i,x,xs) $ error "impossible"
+                  else lexIndexX (i - n) (insertAS x e) j s
+  | otherwise = traceShow (i,e,j,s) $ error "impossible"
 
 -- lexIndexX 0 emptyAS "aba" = Just ""
 -- lexIndexX 1 emptyAS "aba" = Just "a"
@@ -54,7 +74,9 @@ lexIndexX !i !e !s = case allOccurrencesNotIn s e of
 
 main = do
   s <- getLine -- 1 <= length s <= 10^6
-  k <- readLn :: IO Int64 -- 1 <= k <= 10^18
-  case lexIndexX k emptyAS s of
+  k <- readLn :: IO Integer -- 1 <= k <= 10^18
+  arr <- V.replicate (length s + 1) M.empty
+  v <- runReaderT (lexIndexX k emptyAS 0 s) arr
+  case v of
     Nothing -> putStrLn "Eel"
     Just t -> putStrLn t
