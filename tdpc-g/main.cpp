@@ -11,6 +11,7 @@ using INT = std::uint64_t;
 struct AlphabetSet {
     std::int32_t val;
     static const AlphabetSet empty;
+    static const AlphabetSet all;
     constexpr auto elem(char c) const -> bool
     {
         return !!(val & (1 << (c - 'a')));
@@ -19,13 +20,22 @@ struct AlphabetSet {
     {
         return {val | (1 << (c - 'a'))};
     }
+    constexpr auto operator==(AlphabetSet rhs) const -> bool
+    {
+        return val == rhs.val;
+    }
+    constexpr auto operator!=(AlphabetSet rhs) const -> bool
+    {
+        return val != rhs.val;
+    }
 };
 const AlphabetSet AlphabetSet::empty = {0};
+const AlphabetSet AlphabetSet::all = {(1 << 26) - 1};
 
-auto allOccurrenceNotIn(const char *s, AlphabetSet e) -> std::vector<std::pair<char, const char *>>
+auto allOccurrencesNotIn(const char *s, AlphabetSet e) -> std::vector<std::pair<char, const char *>>
 {
     std::vector<std::pair<char, const char *>> res;
-    for (; *s; ++s) {
+    for (; *s && e != AlphabetSet::all; ++s) {
         if (!e.elem(*s)) {
             res.emplace_back(*s, s+1);
             e = e.insert(*s);
@@ -63,7 +73,7 @@ auto lexIndexW(INT i, std::vector<Pair>::const_iterator it, std::vector<Pair>::c
 
 auto lexIndexX(INT i, const char *s) -> std::string
 {
-    auto t = allOccurrenceNotIn(s, AlphabetSet::empty);
+    auto t = allOccurrencesNotIn(s, AlphabetSet::empty);
     std::sort(t.begin(), t.end(), [](Pair const& a, Pair const& b) { return a.first < b.first; });
     return lexIndexW(i, t.begin(), t.end(), i);
 }
@@ -83,7 +93,7 @@ int main()
             INT val = 1;
             {
                 AlphabetSet e = AlphabetSet::empty;
-                for (const char *t = s; *t; ++t) {
+                for (const char *t = s; *t && e != AlphabetSet::all; ++t) {
                     if (!e.elem(*t)) {
                         val += memo.at(t+1 - strBase);
                         if (val > k) {
@@ -94,7 +104,7 @@ int main()
                 }
             }
             /*
-              auto const& t = allOccurrenceNotIn(s, AlphabetSet::empty);
+              auto const& t = allOccurrencesNotIn(s, AlphabetSet::empty);
               for (auto const& u : t) {
               val += memo.at(u.second - strBase);
               if (val > k) {
