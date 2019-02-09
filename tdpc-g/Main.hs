@@ -6,6 +6,7 @@ import Data.Word
 import Data.List
 import Data.Char
 import Data.Bits
+import qualified Data.Vector.Unboxed as V
 import qualified Data.Vector.Unboxed.Mutable as V
 import Debug.Trace
 
@@ -27,9 +28,10 @@ instance Show AlphabetSet where
   show = show . toStringAS
 
 allOccurrencesNotIn :: Int -> String -> AlphabetSet -> [(Char, Int, String)]
-allOccurrencesNotIn !i [] _ = []
-allOccurrencesNotIn !i (x:xs) e | x `elemAS` e = allOccurrencesNotIn (i+1) xs e
-                                | otherwise = (x,i+1,xs) : allOccurrencesNotIn (i+1) xs (insertAS x e)
+allOccurrencesNotIn !i [] !_ = []
+allOccurrencesNotIn !i (x:xs) !e | x `elemAS` e = allOccurrencesNotIn (i+1) xs e
+                                 | otherwise = let !i' = i+1
+                                               in (x,i',xs) : allOccurrencesNotIn i' xs (insertAS x e)
 
 type INT = {- Integer -} Word64
 
@@ -39,30 +41,26 @@ satAdd !a !b = let !c = a + b
                   then maxBound
                   else c
 
-type Memo a = ReaderT (V.IOVector INT) IO a
+numberOfSubstringsV :: String -> V.Vector INT
+numberOfSubstringsV s = V.create $ do
+  let ls = length s
+  v <- V.new (ls + 1)
+  forM_ (reverse $ zip [0..] $ tails s) $ \(i,ss) -> do
+    let loop !acc [] = return acc
+        loop !acc _ | acc == maxBound = return acc
+        loop !acc ((_,j,xs):xss) = do y <- V.read v j
+                                      loop (satAdd acc y) xss
+    val <- loop 1 (allOccurrencesNotIn i ss emptyAS)
+    V.write v i val
+  return v
 
-numberOfSubstrings :: Int -> String -> Memo INT
-numberOfSubstrings !i [] = return 1
-numberOfSubstrings !i s = do
-  arr <- ask
-  m <- V.read arr i
-  if m /= 0
-    then return m
-    else do v <- doCalc i s
-            V.write arr i v
-            return v
-              where -- doCalc i s = foldl' satAdd 0 <$> sequence [ numberOfSubstrings j xs | (x,j,xs) <- allOccurrencesNotIn i s emptyAS ]
-                    doCalc i s = loop 1 (allOccurrencesNotIn i s emptyAS)
-                    loop !acc [] = return acc
-                    loop !acc _ | acc == maxBound = return acc
-                    loop !acc ((x,j,xs):xss) = do y <- numberOfSubstrings j xs
-                                                  loop (satAdd acc y) xss
+type Memo a = Reader (V.Vector INT) a
 
 lexIndexW :: INT -> [(Char, Int, String)] -> Memo (Maybe String)
 lexIndexW 0 !_ = return (Just "")
 lexIndexW !i [] = return Nothing
 lexIndexW !i ((x,j,xs):xss) = do
-  n <- numberOfSubstrings j xs
+  n <- asks (V.! j)
   if i <= n
     then do v <- lexIndexX (i - 1) j xs
             case v of
@@ -83,8 +81,8 @@ lexIndexX i j s = lexIndexW i $ sortBy (\(x,_,_) (y,_,_) -> compare x y) $ allOc
 
 runMemo :: String -> Memo a -> IO a
 runMemo s m = do
-  arr <- V.new (length s + 1)
-  runReaderT m arr
+  let arr = numberOfSubstringsV s
+  return (runReader m arr)
 
 main = do
   s <- getLine -- 1 <= length s <= 10^6
