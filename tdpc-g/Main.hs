@@ -1,7 +1,7 @@
 {-# LANGUAGE BangPatterns #-}
 import Control.Monad (forM_)
 import Control.Monad.Reader
-import Data.Int (Int64)
+import Data.Int (Int64, Int32)
 import Data.Array.Unboxed (UArray, (!))
 import Data.Array.ST (runSTUArray, newArray, readArray, writeArray)
 import qualified Data.Vector.Unboxed as V
@@ -9,7 +9,7 @@ import qualified Data.Vector.Unboxed.Mutable as V
 import Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as BS
 
-type StringIndexTable = UArray (Int, Char) Int
+type StringIndexTable = UArray (Int, Char) Int32
 
 -- arr ! (i, ord x - ord 'a') : 文字列の i 番目以降に最初に現れる文字 x のインデックス（現れない場合は -1）
 -- となるような2次元配列 arr を返す。
@@ -21,7 +21,7 @@ mkStringIndexTable !s = runSTUArray $ do
       v <- readArray arr (i + 1, j)
       writeArray arr (i, j) v
     let x = BS.index s i
-    writeArray arr (i, x) i
+    writeArray arr (i, x) (fromIntegral i)
   return arr
 
 -- テスト用
@@ -42,7 +42,7 @@ allOccurrences !i = do
            then []
            else [ (c, j)
                 | c <- ['a'..'z']
-                , let j = tbl ! (i, c)
+                , let j = fromIntegral (tbl ! (i, c))
                 , j /= -1
                 ]
 
@@ -116,8 +116,8 @@ run m str = let tbl = mkStringIndexTable str
             in runReader m ((str, tbl), arr)
 
 main = do
-  str <- BS.getLine -- 1 <= length str <= 10^6
-  k <- readLn :: IO Int64 -- 1 <= k <= 10^18 < 2*10^18 < maxBound = 2^63-1
+  str <- BS.getLine -- 1 <= length str <= 10^6 < (maxBound :: Int32) = 2^31 - 1
+  k <- readLn :: IO Int64 -- 1 <= k <= 10^18 < 2*10^18 < (maxBound :: Int64) = 2^63-1
   case run (lexIndex k) str of
     Nothing -> putStrLn "Eel"
     Just result -> BS.putStrLn result
