@@ -54,3 +54,5 @@ executables:
   tdpc-g:
     main:                Main.hs
     source-dirs:         tdpc-g
+    dependencies:
+      - bytestring
