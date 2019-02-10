@@ -11,7 +11,7 @@ import qualified Data.ByteString.Char8 as BS
 
 type StringIndexTable = UArray (Int, Char) Int32
 
--- arr ! (i, ord x - ord 'a') : 文字列の i 番目以降に最初に現れる文字 x のインデックス（現れない場合は -1）
+-- arr ! (i, x) : 文字列の i 番目以降に最初に現れる文字 x のインデックス（現れない場合は -1）
 -- となるような2次元配列 arr を返す。
 mkStringIndexTable :: ByteString -> StringIndexTable
 mkStringIndexTable !s = runSTUArray $ do
