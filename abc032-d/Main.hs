@@ -165,7 +165,7 @@ main = do
         print ans
       solve5 = do -- dataset 3
         -- vi's are small
-        -- uses map
+        -- uses vector
         let m = solveVV maxW xs (V.singleton 0)
         print (V.length m - 1)
   args <- getArgs
