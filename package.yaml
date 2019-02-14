@@ -57,6 +57,10 @@ executables:
     dependencies:
       - bytestring
 
+  tdpc-h:
+    main:                Main.hs
+    source-dirs:         tdpc-h
+
   abc032-d:
     main:                Main.hs
     source-dirs:         abc032-d
