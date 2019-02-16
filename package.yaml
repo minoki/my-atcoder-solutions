@@ -26,6 +26,10 @@ dependencies:
 - containers
 - mtl
 
+ghc-options:
+# Maximum heap size: 1GiB
+- -with-rtsopts=-M1G
+
 executables:
   tdpc-a:
     main:                Main.hs
