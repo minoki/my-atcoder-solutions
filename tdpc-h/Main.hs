@@ -180,9 +180,9 @@ solveV !maxWeight !maxColors ((!w,!v,!c):xs) vec
                   $ S.map (\(w',colors) -> (w' + w, setBit colors c)) set
 
 solveByColor :: Int -> Int -> [(Int,[(Int,Int)])] -> ML.Map Int (VU.Vector Int)
-solveByColor maxWeight maxColor [] = let v = VU.replicate (maxWeight + 1) 0
-                                     in ML.fromList [(k, v) | k <- [0..maxColor]]
-solveByColor maxWeight maxColor ((_c,ys):xs)
+solveByColor !maxWeight !maxColor [] = let v = VU.replicate (maxWeight + 1) 0
+                                       in ML.fromList [(k, v) | k <- [0..maxColor]]
+solveByColor !maxWeight !maxColor ((_c,ys):xs)
   = let map = solveByColor maxWeight maxColor xs
     in ML.fromList [ if k == 0 then (0, map ML.! 0) else (k, v0)
                    | k <- [0..maxColor]
@@ -190,17 +190,19 @@ solveByColor maxWeight maxColor ((_c,ys):xs)
                    ]
   where
     loop [] vv = vv
-    loop ((!w,!v):ys) vv = loop ys $ VU.create $ do
-      ww <- VUM.replicate (maxWeight + 1) (0, 0)
-      forM_ [0..maxWeight] $ \i ->
-        if i < w
-          then VUM.write ww i (vv VU.! i)
-          else do let (a0, a1) = vv VU.! i
-                      (_, a1') = vv VU.! (i - w)
-                      b0 = max a0 (a1' + v)
-                      b1 = max a1 (a1' + v)
-                  VUM.write ww i (b0,b1)
-      return ww
+    loop ((!w,!v):ys) vv
+      | w <= maxWeight = loop ys $ VU.create $ do
+          ww <- VUM.replicate (maxWeight + 1) (0, 0)
+          forM_ [0..w-1] $ \i ->
+            VUM.write ww i (vv VU.! i)
+          forM_ [w..maxWeight] $ \i -> do
+            let (a0, a1) = vv VU.! i
+                (_, a1') = vv VU.! (i - w)
+                b0 = max a0 (a1' + v)
+                b1 = max a1 (a1' + v)
+            VUM.write ww i (b0,b1)
+          return ww
+      | otherwise = loop ys vv
 
 main = do
   [n,w,c] <- parseInts <$> getLine
