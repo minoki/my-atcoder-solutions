@@ -1,3 +1,6 @@
 .stack-work/
 atcoder.cabal
 *~
+abc032-d/dataset*.txt
+tdpc-h/dataset*.txt
+*.prof
