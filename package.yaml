@@ -76,3 +76,7 @@ executables:
   agc031-c:
     main:                Main.hs
     source-dirs:         agc031-c
+
+  agc031-d:
+    main:                Main.hs
+    source-dirs:         agc031-d
