@@ -35,3 +35,4 @@ Haskellを主に使用。
 
 * A Colorful Subsequence
 * C Differ by 1 Bit
+* D A Sequence of Permutations
