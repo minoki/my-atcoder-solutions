@@ -26,3 +26,12 @@ Haskellを主に使用。
 解いた問題：
 
 * D ナップサック問題
+
+## AtCoder Grand Contest 031
+
+<https://atcoder.jp/contests/agc031>
+
+解いた問題：
+
+* A Colorful Subsequence
+* C Differ by 1 Bit
