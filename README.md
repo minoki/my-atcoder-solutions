@@ -34,5 +34,6 @@ Haskellを主に使用。
 解いた問題：
 
 * A Colorful Subsequence
+* B Reversi
 * C Differ by 1 Bit
 * D A Sequence of Permutations
