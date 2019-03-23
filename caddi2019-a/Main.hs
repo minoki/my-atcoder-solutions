@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 import Data.Int
 import Data.List
 import Data.Monoid
@@ -26,11 +27,16 @@ main = do
   let loc = V.create $ do
         loc <- VM.replicate n (-1,-1,-1)
         let rp_sorted = sortBy (\(i,(r1,p1)) (j,(r2,p2)) -> compare p2 p1 <> compare r1 r2 <> compare i j) $ zip [0..] $ V.toList rp
-            loop x ((i,(r,p)):rest)
-              | x + 2 * r <= l = VM.write loc i (x + r, r, r) >> loop (x + 2 * r) rest
-              | otherwise = loop x rest
-            loop x [] = return ()
-        loop 0 rp_sorted
+            loop !x !y !z !maxR (c@(i,(r,p)):rest) notinserted
+              | x + 2 * r <= l && y + 2 * r <= l && z + 2 * r <= l = do
+                  VM.write loc i (x + r, y + r, z + r)
+                  loop (x + 2 * r) y z (max r maxR) rest notinserted
+              | otherwise = loop x y z maxR rest (c:notinserted)
+            loop !x !y !z !maxR [] notinserted
+              | y + 2 * maxR < l = loop 0 (y + 2 * maxR) z maxR notinserted []
+              | z + 2 * maxR < l = loop 0 0 (z + 2 * maxR) maxR notinserted []
+              | otherwise = return ()
+        loop 0 0 0 0 rp_sorted []
         return loc
   V.forM_ loc $ \(x,y,z) -> do
     putStrLn $ concat [show x, " ", show y, " ", show z]
