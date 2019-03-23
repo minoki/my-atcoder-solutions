@@ -84,3 +84,7 @@ executables:
   agc031-d:
     main:                Main.hs
     source-dirs:         agc031-d
+
+  caddi2019-a:
+    main:                Main.hs
+    source-dirs:         caddi2019-a
