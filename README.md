@@ -37,3 +37,22 @@ Haskellを主に使用。
 * B Reversi
 * C Differ by 1 Bit
 * D A Sequence of Permutations
+
+## AtCoder Grand Contest 032 (2019-03-23)
+
+<https://atcoder.jp/contests/agc032>
+
+解いた問題：
+
+* A Limited Insertion
+
+## AtCoder Beginner Contest 122 (2019-03-24)
+
+<https://atcoder.jp/contests/abc122>
+
+解いた問題：
+
+* A, B, C
+* D We Like AGC
+    * Fast: 5項間漸化式を立てた（配列を使わない）。ただし想定解法と同じく O(n)
+    * Small: 想定解法
