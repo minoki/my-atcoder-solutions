@@ -92,3 +92,21 @@ executables:
   agc032-a:
     main:                Main.hs
     source-dirs:         agc032-a
+
+  abc122-a:
+    main:                Main.hs
+    source-dirs:         abc122-a
+
+  abc122-b:
+    main:                Main.hs
+    source-dirs:         abc122-b
+
+  abc122-c:
+    main:                Main.hs
+    source-dirs:         abc122-c
+    dependencies:
+      - bytestring
+
+  abc122-d:
+    main:                Main.hs
+    source-dirs:         abc122-d
