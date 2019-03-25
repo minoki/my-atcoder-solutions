@@ -93,6 +93,10 @@ executables:
     main:                Main.hs
     source-dirs:         agc032-a
 
+  agc032-b:
+    main:                Main.hs
+    source-dirs:         agc032-b
+
   abc122-a:
     main:                Main.hs
     source-dirs:         abc122-a

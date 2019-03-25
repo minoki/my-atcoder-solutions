@@ -45,6 +45,7 @@ Haskellを主に使用。
 解いた問題：
 
 * A Limited Insertion
+* B Balanced Neighbors
 
 ## AtCoder Beginner Contest 122 (2019-03-24)
 
