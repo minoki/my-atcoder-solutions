@@ -114,3 +114,7 @@ executables:
   abc122-d:
     main:                Main.hs
     source-dirs:         abc122-d
+
+  abc121-d:
+    main:                Main.hs
+    source-dirs:         abc121-d
