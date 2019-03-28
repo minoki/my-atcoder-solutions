@@ -33,10 +33,10 @@ Haskellを主に使用。
 
 解いた問題：
 
-* A Colorful Subsequence
-* B Reversi
-* C Differ by 1 Bit
-* D A Sequence of Permutations
+* A - Colorful Subsequence
+* B - Reversi
+* C - Differ by 1 Bit
+* D - A Sequence of Permutations
 
 ## AtCoder Grand Contest 032 (2019-03-23)
 
@@ -44,8 +44,8 @@ Haskellを主に使用。
 
 解いた問題：
 
-* A Limited Insertion
-* B Balanced Neighbors
+* A - Limited Insertion
+* B - Balanced Neighbors
 
 ## AtCoder Beginner Contest 122 (2019-03-24)
 
@@ -54,6 +54,22 @@ Haskellを主に使用。
 解いた問題：
 
 * A, B, C
-* D We Like AGC
+* D - We Like AGC
     * Fast: 5項間漸化式を立てた（配列を使わない）。ただし想定解法と同じく O(n)
     * Small: 想定解法
+
+## AtCoder Beginner Contest 121
+
+<https://atcoder.jp/contests/abc121>
+
+解いた問題：
+
+* D - XOR World
+
+## AtCoder Beginner Contest 120
+
+<https://atcoder.jp/contests/abc120>
+
+解いた問題：
+
+* D - Decayed Bridges
