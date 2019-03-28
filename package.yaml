@@ -123,3 +123,7 @@ executables:
   dp-a:
     main:                Main.hs
     source-dirs:         dp-a
+
+  dp-b:
+    main:                Main.hs
+    source-dirs:         dp-b
