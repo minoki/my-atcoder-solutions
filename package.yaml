@@ -119,3 +119,7 @@ executables:
   abc120-d:
     main:                Main.hs
     source-dirs:         abc120-d
+
+  dp-a:
+    main:                Main.hs
+    source-dirs:         dp-a
