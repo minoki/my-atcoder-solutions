@@ -25,6 +25,7 @@ dependencies:
 - vector
 - containers
 - mtl
+- bytestring
 
 ghc-options:
 # Maximum heap size: 1GiB
@@ -58,8 +59,6 @@ executables:
   tdpc-g:
     main:                Main.hs
     source-dirs:         tdpc-g
-    dependencies:
-      - bytestring
 
   tdpc-h:
     main:                Main.hs
@@ -108,8 +107,6 @@ executables:
   abc122-c:
     main:                Main.hs
     source-dirs:         abc122-c
-    dependencies:
-      - bytestring
 
   abc122-d:
     main:                Main.hs
