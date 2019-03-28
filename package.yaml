@@ -131,3 +131,7 @@ executables:
   dp-c:
     main:                Main.hs
     source-dirs:         dp-c
+
+  dp-d:
+    main:                Main.hs
+    source-dirs:         dp-d
