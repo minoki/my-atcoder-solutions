@@ -19,6 +19,17 @@ Haskellを主に使用。
 * T フィボナッチ <https://github.com/minoki/typical-dp-contest-t-fibonacci>
     * 解説記事：[フィボナッチ数絡みの競プロの問題を解いてみた（Typical DP Contest T）](https://blog.miz-ar.info/2019/02/typical-dp-contest-t/)
 
+## Educational DP Contest
+
+<https://atcoder.jp/contests/dp>
+
+解いた問題：
+
+* A - Frog 1
+* B - Frog 2
+* C - Vacation
+* D - Knapsack 1
+
 ## AtCoder Beginner Contest 032
 
 <https://abc032.contest.atcoder.jp/tasks/abc032_d>
@@ -57,6 +68,8 @@ Haskellを主に使用。
 * D - We Like AGC
     * Fast: 5項間漸化式を立てた（配列を使わない）。ただし想定解法と同じく O(n)
     * Small: 想定解法
+    * MatPow, PolyDiv: O(log n) の解法
+    * 解説記事：[AtCoder Beginners Contest 122 の D の別解 (ABC122-D)](https://blog.miz-ar.info/2019/03/abc122-d/)
 
 ## AtCoder Beginner Contest 121
 
