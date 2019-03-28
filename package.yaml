@@ -127,3 +127,7 @@ executables:
   dp-b:
     main:                Main.hs
     source-dirs:         dp-b
+
+  dp-c:
+    main:                Main.hs
+    source-dirs:         dp-c
