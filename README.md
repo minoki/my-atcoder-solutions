@@ -77,6 +77,7 @@ Haskellを主に使用。
 
 解いた問題：
 
+* C - Energy Drink Collector
 * D - XOR World
 
 ## AtCoder Beginner Contest 120
