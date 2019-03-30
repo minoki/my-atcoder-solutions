@@ -112,6 +112,14 @@ executables:
     main:                Main.hs
     source-dirs:         abc122-d
 
+  abc121-a:
+    main:                Main.hs
+    source-dirs:         abc121-a
+
+  abc121-b:
+    main:                Main.hs
+    source-dirs:         abc121-b
+
   abc121-c:
     main:                Main.hs
     source-dirs:         abc121-c
@@ -119,6 +127,14 @@ executables:
   abc121-d:
     main:                Main.hs
     source-dirs:         abc121-d
+
+  abc120-a:
+    main:                Main.hs
+    source-dirs:         abc120-a
+
+  abc120-b:
+    main:                Main.hs
+    source-dirs:         abc120-b
 
   abc120-d:
     main:                Main.hs
