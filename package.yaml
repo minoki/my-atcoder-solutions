@@ -155,3 +155,11 @@ executables:
   dp-d:
     main:                Main.hs
     source-dirs:         dp-d
+
+  exawizards2019-a:
+    main:                Main.hs
+    source-dirs:         exawizards2019-a
+
+  exawizards2019-b:
+    main:                Main.hs
+    source-dirs:         exawizards2019-b
