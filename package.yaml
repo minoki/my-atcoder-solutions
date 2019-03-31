@@ -164,6 +164,14 @@ executables:
     main:                Main.hs
     source-dirs:         exawizards2019-b
 
+  exawizards2019-c:
+    main:                Main.hs
+    source-dirs:         exawizards2019-c
+
+  exawizards2019-d:
+    main:                Main.hs
+    source-dirs:         exawizards2019-d
+
   exawizards2019-e:
     main:                Main.hs
     source-dirs:         exawizards2019-e
