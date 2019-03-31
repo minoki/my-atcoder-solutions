@@ -65,7 +65,9 @@ Haskellを主に使用。
 
 解いた問題：
 
-* A, B, C
+* A - Double Helix
+* B - ATCoder
+* C - GeT AC
 * D - We Like AGC
     * Fast: 5項間漸化式を立てた（配列を使わない）。ただし想定解法と同じく O(n)
     * Small: 想定解法
@@ -78,7 +80,8 @@ Haskellを主に使用。
 
 解いた問題：
 
-* A, B
+* A - White Cells
+* B - Can you solve this?
 * C - Energy Drink Collector
 * D - XOR World
 
@@ -88,7 +91,9 @@ Haskellを主に使用。
 
 解いた問題：
 
-* A, B
+* A - Favorite Sound
+* B - K-th Common Divisor
+* C - Unification
 * D - Decayed Bridges
 
 ## エクサウィザーズ 2019 (2019-03-30)
@@ -97,5 +102,6 @@ Haskellを主に使用。
 
 解いた問題：
 
-* A, B
+* A - Regular Triangle
+* B - Red or Blue
 * E - Black or White
