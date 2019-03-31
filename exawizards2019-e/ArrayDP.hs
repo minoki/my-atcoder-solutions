@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+module ArrayDP where
 import Control.Monad
 import Data.Int
 import qualified Data.Vector.Unboxed as U
@@ -24,7 +25,7 @@ recipM x = case exEuclid x modulo of
              (-1,a,_) -> (-a) `mod` modulo
 divM x y = x `mulMod` recipM y
 
-newtype N = N { unwrapN :: Int64 } deriving (Eq, Show)
+newtype N = N Int64 deriving (Eq, Show)
 instance Num N where
   N x + N y = N ((x + y) `rem` modulo)
   N x - N y = N ((x - y) `mod` modulo)
@@ -40,17 +41,26 @@ instance Fractional N where
 main = do
   [b,w] <- map (read . BS.unpack) . BS.words <$> BS.getLine
   let half = 1 / 2 :: N
-      minBW = min b w
-  let addModHalf :: Int64 -> Int64 -> Int64
-      addModHalf x y = addMod x y `mulMod` unwrapN half -- (x + y) / 2
-      tweakedBinom :: [U.Vector Int64]
-      tweakedBinom = U.singleton (unwrapN $ half * half)
-                     : map (\vec -> if U.length vec < minBW
-                                    then U.zipWith addModHalf (U.snoc vec 0) (U.cons 0 vec)
-                                    else U.zipWith addModHalf vec (U.cons 0 $ U.take (minBW - 1) vec)) tweakedBinom
-      at km1 vec j | j < U.length vec = N (vec U.! j)
-                   | j <= km1, km1-j < U.length vec = N (vec U.! (km1-j))
-                   | otherwise = 0
-      solution = scanl (\x (km1,vec) -> x + at km1 vec (w-1) - at km1 vec (b-1)) half (zip [0..b+w-2] tweakedBinom)
-  forM_ (solution) $ \x -> do
-    print $ unwrapN x
+  arr <- newArray ((0,0),(b+1,w+1)) 0 :: IO (IOUArray (Int,Int) Int64)
+  writeArray arr (b,w) 1
+  vec <- UM.new (b+w) :: IO (UM.IOVector Int64)
+  forM_ [b+w-1,b+w-2..0] $ \i -> do
+    forM_ [max 0 (i - w)..min b i] $ \j -> do
+      let k = i - j
+      -- j + k == i
+      -- 0 <= j <= b, 0 <= k <= w
+      u <- readArray arr (j+1,k)
+      v <- readArray arr (j,k+1)
+      let N uu | k == 0 = N u
+               | otherwise = half * N u
+      let N vv | j == 0 = N v
+               | otherwise = half * N v
+      UM.modify vec (`addMod` uu) i
+      writeArray arr (j,k) (uu `addMod` vv)
+  {-
+  forM_ [0..b] $ \j -> do
+    r <- forM [0..w] $ \k -> readArray arr (j,k)
+    print r
+  -}
+  forM_ [b+w-1,b+w-2..0] $ \i -> do
+    print =<< UM.read vec i
