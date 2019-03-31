@@ -29,6 +29,7 @@ Haskellを主に使用。
 * B - Frog 2
 * C - Vacation
 * D - Knapsack 1
+* E - Knapsack 2
 
 ## AtCoder Beginner Contest 032
 
