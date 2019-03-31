@@ -77,6 +77,7 @@ Haskellを主に使用。
 
 解いた問題：
 
+* A, B
 * C - Energy Drink Collector
 * D - XOR World
 
@@ -86,4 +87,14 @@ Haskellを主に使用。
 
 解いた問題：
 
+* A, B
 * D - Decayed Bridges
+
+## エクサウィザーズ 2019 (2019-03-30)
+
+<https://atcoder.jp/contests/exawizards2019>
+
+解いた問題：
+
+* A, B
+* E - Black or White
