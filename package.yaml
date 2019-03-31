@@ -31,6 +31,9 @@ ghc-options:
 # Maximum heap size: 1GiB
 - -with-rtsopts=-M1G
 
+library:
+  source-dirs: lib
+
 executables:
   tdpc-a:
     main:                Main.hs
