@@ -186,3 +186,7 @@ executables:
   exawizards2019-e:
     main:                Main.hs
     source-dirs:         exawizards2019-e
+
+  agc023-a:
+    main:                Main.hs
+    source-dirs:         agc023-a

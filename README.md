@@ -105,3 +105,11 @@ Haskellを主に使用。
 * A - Regular Triangle
 * B - Red or Blue
 * E - Black or White
+
+## AtCoder Grand Contest 023
+
+<https://atcoder.jp/contests/agc023>
+
+解いた問題：
+
+* A - Zero Sum Ranges
