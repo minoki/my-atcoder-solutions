@@ -30,6 +30,7 @@ Haskellを主に使用。
 * C - Vacation
 * D - Knapsack 1
 * E - Knapsack 2
+* F - LCS
 
 ## AtCoder Beginner Contest 032
 
