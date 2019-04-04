@@ -31,6 +31,8 @@ Haskellを主に使用。
 * D - Knapsack 1
 * E - Knapsack 2
 * F - LCS
+* H - Grid 1
+* I - Coins
 
 ## AtCoder Beginner Contest 032
 
