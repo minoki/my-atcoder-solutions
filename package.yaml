@@ -30,122 +30,123 @@ dependencies:
 ghc-options:
 # Maximum heap size: 1GiB
 - -with-rtsopts=-M1G
+- -dynamic
 
 library:
   source-dirs: lib
 
 executables:
-  tdpc-a:
-    main:                Main.hs
-    source-dirs:         tdpc-a
+#  tdpc-a:
+#    main:                Main.hs
+#    source-dirs:         tdpc-a
 
-  tdpc-b:
-    main:                Main.hs
-    source-dirs:         tdpc-b
+#  tdpc-b:
+#    main:                Main.hs
+#    source-dirs:         tdpc-b
 
-  tdpc-c:
-    main:                Main.hs
-    source-dirs:         tdpc-c
+#  tdpc-c:
+#    main:                Main.hs
+#    source-dirs:         tdpc-c
 
-  tdpc-d:
-    main:                Main.hs
-    source-dirs:         tdpc-d
+#  tdpc-d:
+#    main:                Main.hs
+#    source-dirs:         tdpc-d
 
-  tdpc-e:
-    main:                Main.hs
-    source-dirs:         tdpc-e
+#  tdpc-e:
+#    main:                Main.hs
+#    source-dirs:         tdpc-e
 
-  tdpc-f:
-    main:                Main.hs
-    source-dirs:         tdpc-f
+#  tdpc-f:
+#    main:                Main.hs
+#    source-dirs:         tdpc-f
 
-  tdpc-g:
-    main:                Main.hs
-    source-dirs:         tdpc-g
+#  tdpc-g:
+#    main:                Main.hs
+#    source-dirs:         tdpc-g
 
-  tdpc-h:
-    main:                Main.hs
-    source-dirs:         tdpc-h
+#  tdpc-h:
+#    main:                Main.hs
+#    source-dirs:         tdpc-h
 
-  abc032-d:
-    main:                Main.hs
-    source-dirs:         abc032-d
+#  abc032-d:
+#    main:                Main.hs
+#    source-dirs:         abc032-d
 
-  agc031-a:
-    main:                Main.hs
-    source-dirs:         agc031-a
+#  agc031-a:
+#    main:                Main.hs
+#    source-dirs:         agc031-a
 
-  agc031-b:
-    main:                Main.hs
-    source-dirs:         agc031-b
+#  agc031-b:
+#    main:                Main.hs
+#    source-dirs:         agc031-b
 
-  agc031-c:
-    main:                Main.hs
-    source-dirs:         agc031-c
+#  agc031-c:
+#    main:                Main.hs
+#    source-dirs:         agc031-c
 
-  agc031-d:
-    main:                Main.hs
-    source-dirs:         agc031-d
+#  agc031-d:
+#    main:                Main.hs
+#    source-dirs:         agc031-d
 
-  caddi2019-a:
-    main:                Main.hs
-    source-dirs:         caddi2019-a
+#  caddi2019-a:
+#    main:                Main.hs
+#    source-dirs:         caddi2019-a
 
-  agc032-a:
-    main:                Main.hs
-    source-dirs:         agc032-a
+#  agc032-a:
+#    main:                Main.hs
+#    source-dirs:         agc032-a
 
-  agc032-b:
-    main:                Main.hs
-    source-dirs:         agc032-b
+#  agc032-b:
+#    main:                Main.hs
+#    source-dirs:         agc032-b
 
-  abc122-a:
-    main:                Main.hs
-    source-dirs:         abc122-a
+#  abc122-a:
+#    main:                Main.hs
+#    source-dirs:         abc122-a
 
-  abc122-b:
-    main:                Main.hs
-    source-dirs:         abc122-b
+#  abc122-b:
+#    main:                Main.hs
+#    source-dirs:         abc122-b
 
-  abc122-c:
-    main:                Main.hs
-    source-dirs:         abc122-c
+#  abc122-c:
+#    main:                Main.hs
+#    source-dirs:         abc122-c
 
-  abc122-d:
-    main:                Main.hs
-    source-dirs:         abc122-d
+#  abc122-d:
+#    main:                Main.hs
+#    source-dirs:         abc122-d
 
-  abc121-a:
-    main:                Main.hs
-    source-dirs:         abc121-a
+#  abc121-a:
+#    main:                Main.hs
+#    source-dirs:         abc121-a
 
-  abc121-b:
-    main:                Main.hs
-    source-dirs:         abc121-b
+#  abc121-b:
+#    main:                Main.hs
+#    source-dirs:         abc121-b
 
-  abc121-c:
-    main:                Main.hs
-    source-dirs:         abc121-c
+#  abc121-c:
+#    main:                Main.hs
+#    source-dirs:         abc121-c
 
-  abc121-d:
-    main:                Main.hs
-    source-dirs:         abc121-d
+#  abc121-d:
+#    main:                Main.hs
+#    source-dirs:         abc121-d
 
-  abc120-a:
-    main:                Main.hs
-    source-dirs:         abc120-a
+#  abc120-a:
+#    main:                Main.hs
+#    source-dirs:         abc120-a
 
-  abc120-b:
-    main:                Main.hs
-    source-dirs:         abc120-b
+#  abc120-b:
+#    main:                Main.hs
+#    source-dirs:         abc120-b
 
-  abc120-c:
-    main:                Main.hs
-    source-dirs:         abc120-c
+#  abc120-c:
+#    main:                Main.hs
+#    source-dirs:         abc120-c
 
-  abc120-d:
-    main:                Main.hs
-    source-dirs:         abc120-d
+#  abc120-d:
+#    main:                Main.hs
+#    source-dirs:         abc120-d
 
   dp-a:
     main:                Main.hs
@@ -183,25 +184,25 @@ executables:
     main:                Main.hs
     source-dirs:         dp-i
 
-  exawizards2019-a:
-    main:                Main.hs
-    source-dirs:         exawizards2019-a
+#  exawizards2019-a:
+#    main:                Main.hs
+#    source-dirs:         exawizards2019-a
 
-  exawizards2019-b:
-    main:                Main.hs
-    source-dirs:         exawizards2019-b
+#  exawizards2019-b:
+#    main:                Main.hs
+#    source-dirs:         exawizards2019-b
 
-  exawizards2019-c:
-    main:                Main.hs
-    source-dirs:         exawizards2019-c
+#  exawizards2019-c:
+#    main:                Main.hs
+#    source-dirs:         exawizards2019-c
 
-  exawizards2019-d:
-    main:                Main.hs
-    source-dirs:         exawizards2019-d
+#  exawizards2019-d:
+#    main:                Main.hs
+#    source-dirs:         exawizards2019-d
 
-  exawizards2019-e:
-    main:                Main.hs
-    source-dirs:         exawizards2019-e
+#  exawizards2019-e:
+#    main:                Main.hs
+#    source-dirs:         exawizards2019-e
 
   agc023-a:
     main:                Main.hs
