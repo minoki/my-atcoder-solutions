@@ -148,33 +148,33 @@ executables:
 #    main:                Main.hs
 #    source-dirs:         abc120-d
 
-  dp-a:
-    main:                Main.hs
-    source-dirs:         dp-a
+#  dp-a:
+#    main:                Main.hs
+#    source-dirs:         dp-a
 
-  dp-b:
-    main:                Main.hs
-    source-dirs:         dp-b
+#  dp-b:
+#    main:                Main.hs
+#    source-dirs:         dp-b
 
-  dp-c:
-    main:                Main.hs
-    source-dirs:         dp-c
+#  dp-c:
+#    main:                Main.hs
+#    source-dirs:         dp-c
 
-  dp-d:
-    main:                Main.hs
-    source-dirs:         dp-d
+#  dp-d:
+#    main:                Main.hs
+#    source-dirs:         dp-d
 
-  dp-e:
-    main:                Main.hs
-    source-dirs:         dp-e
+#  dp-e:
+#    main:                Main.hs
+#    source-dirs:         dp-e
 
-  dp-f:
-    main:                Main.hs
-    source-dirs:         dp-f
+#  dp-f:
+#    main:                Main.hs
+#    source-dirs:         dp-f
 
-  dp-g:
-    main:                Main.hs
-    source-dirs:         dp-g
+#  dp-g:
+#    main:                Main.hs
+#    source-dirs:         dp-g
 
   dp-h:
     main:                Main.hs
