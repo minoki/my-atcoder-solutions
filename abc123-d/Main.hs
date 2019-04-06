@@ -28,22 +28,22 @@ undup :: [(Int64, Int)] -> [Int64]
 undup ((xv,xn):xs) = replicate' xn xv $ undup xs
 undup [] = []
 
-mergeLists :: [[(Int64, Int)]] -> [Int64]
+mergeLists :: [[(Int64, Int)]] -> [(Int64, Int)]
 mergeLists [] = []
 mergeLists (xs:sss) = doMerge' xs sss
   where
     doMerge' xs (ys:sss) = doMerge xs ys sss
-    doMerge' xs [] = undup xs
-    doMerge xs (y@(yv,yn):yss) sss = innerLoop xs yv yn yss sss
-      where innerLoop xs@(x@(xv,xn):xss) !yv !yn yss sss = case compare xv yv of
-              LT -> replicate' yn yv $ doMerge' (mergeTwo xs yss) sss
-              EQ -> replicate' (xn + yn) xv $ doMerge' (mergeTwo xss yss) sss
-              GT -> replicate' xn xv $ innerLoop xss yv yn yss sss
-            innerLoop [] !yv !yn yss sss = replicate' yn yv $ doMerge' yss sss
-    doMerge [] ys [] = undup ys
+    doMerge' xs [] = xs
+    doMerge xs (y:yss) sss = innerLoop xs y yss sss
+      where innerLoop xs@(x@(xv,xn):xss) !y@(!yv,!yn) yss sss = case compare xv yv of
+              LT -> y : doMerge' (mergeTwo xs yss) sss
+              EQ -> let !zn = xn + yn in (xv, zn) : doMerge' (mergeTwo xss yss) sss
+              GT -> x : innerLoop xss y yss sss
+            innerLoop [] !y yss sss = y : doMerge' yss sss
+    doMerge [] ys [] = ys
     doMerge [] ys (zs:sss) = doMerge ys zs sss
     doMerge xs [] (ys:sss) = doMerge xs ys sss
-    doMerge xs [] [] = undup xs
+    doMerge xs [] [] = xs
 
 mergeDup :: [Int64] -> [(Int64, Int)]
 mergeDup (x:xs) = loop 1 x xs
@@ -59,6 +59,23 @@ mergeDup2 ((x,n):xs) = loop n x xs
         loop !i !x [] = [(x,i)]
 mergeDup2 [] = []
 
+sumList :: U.Vector (Int64, Int) -> U.Vector (Int64, Int) -> [(Int64, Int)]
+sumList as bs = let !n = U.length as
+                    !m = U.length bs
+                in mergeLists
+                   [ mergeDup2 $ sortDown
+                     [ (s, nn)
+                     | i <- [max 0 (t-m+1) .. min t (n - 1)]
+                     , let !j = t - i
+                           (a,an) = as U.! i
+                           (b,bn) = bs U.! j
+                           !s = a + b
+                           !nn = an * bn
+                     -- i + j = t
+                     ]
+                   | t <- [0 .. n + m - 2]
+                   ]
+
 main = do
   [x,y,z,k] :: [Int] <- map (read . BS.unpack) . BS.words <$> BS.getLine
   -- x,y,z <= 1000
@@ -67,22 +84,6 @@ main = do
   bs :: U.Vector (Int64, Int) <- U.fromListN y . mergeDup . sortDown . map (read . BS.unpack) . BS.words <$> BS.getLine
   cs :: U.Vector (Int64, Int) <- U.fromListN z . mergeDup . sortDown . map (read . BS.unpack) . BS.words <$> BS.getLine
   -- ai,bi,ci <= 10^10, length as == x, length bs == y, length cs == z
-  let !x' = U.length as
-      !y' = U.length bs
-      !z' = U.length cs
-  let xs = [ mergeDup2 $ sortDown
-             [ (s, nn)
-             | i <- [0 .. min t (x' - 1)]
-             , j <- [max 0 (t - z' - i + 1) .. min (t-i) (y'-1)]
-             , let !k = t - i - j
-                   (a,an) = as U.! i
-                   (b,bn) = bs U.! j
-                   (c,cn) = cs U.! k
-                   !s = a + b + c
-                   !nn = an * bn * cn
-             -- i + j + k = t
-             ]
-           | t <- [0 .. x' + y' + z' - 3]
-           ]
-  let result = take k $ mergeLists xs
+  let a_and_b = U.fromListN (min (U.length as * U.length bs) k) $ take k $ sumList as bs
+      result = take k $ undup $ sumList a_and_b cs
   mapM_ print result
