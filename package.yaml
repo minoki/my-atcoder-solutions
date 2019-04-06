@@ -207,3 +207,15 @@ executables:
   agc023-a:
     main:                Main.hs
     source-dirs:         agc023-a
+
+  abc123-a:
+    main:                Main.hs
+    source-dirs:         abc123-a
+
+  abc123-b:
+    main:                Main.hs
+    source-dirs:         abc123-b
+
+  abc123-c:
+    main:                Main.hs
+    source-dirs:         abc123-c
