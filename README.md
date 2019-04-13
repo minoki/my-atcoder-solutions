@@ -116,3 +116,14 @@ Haskellを主に使用。
 解いた問題：
 
 * A - Zero Sum Ranges
+
+# AtCoder Beginner Contest 124
+
+<https://atcoder.jp/contests/abc124>
+
+解いた問題：
+
+* A - Buttons
+* B - Great Ocean View
+* C - Coloring Colorfully
+* D - Handstand

@@ -223,3 +223,19 @@ executables:
   abc123-d:
     main:                Main.hs
     source-dirs:         abc123-d
+
+  abc124-a:
+    main:                Main.hs
+    source-dirs:         abc124-a
+
+  abc124-b:
+    main:                Main.hs
+    source-dirs:         abc124-b
+
+  abc124-c:
+    main:                Main.hs
+    source-dirs:         abc124-c
+
+  abc124-d:
+    main:                Main.hs
+    source-dirs:         abc124-d
