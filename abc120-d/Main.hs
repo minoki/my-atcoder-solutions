@@ -17,28 +17,39 @@ solve n m edges = V.create $ do
   -- numberOfElements ! i : i番目の島と同じ連結成分に属する島の個数
   numberOfElements <- VM.replicate n 1
 
-  rank <- VM.replicate n (0 :: Int)
+  -- rank <- VM.replicate n (0 :: Int)
 
-  let getRoot !i xs = do
+  let getRoot !i = do
+        !j <- VM.read assocs i
+        if i == j
+          then return i
+          else do k <- getRoot j
+                  VM.write assocs i k
+                  return k
+     {-
+      getRoot !i xs = do
         !j <- VM.read assocs i
         if i == j
           then forM_ xs (\l -> VM.write assocs l i) >> return i
           else getRoot j (i:xs)
-
+     -}
       -- i 番目の島と j 番目の島を繋いで、新たに繋がった組み合わせの個数を返す
       unify !i !j = do
-        !i' <- getRoot i []
-        !j' <- getRoot j []
+        !i' <- getRoot i -- []
+        !j' <- getRoot j -- []
         if i' == j'
           then return 0
           else do
-          !ri <- VM.read rank i'
-          !rj <- VM.read rank j'
+          -- !ri <- VM.read rank i'
+          -- !rj <- VM.read rank j'
+          let !k = min i' j'
+          {-
           !k <- case compare ri rj of
                   EQ -> do VM.write rank i' (ri + 1)
                            return i'
                   LT -> return j'
                   GT -> return i'
+          -}
           VM.write assocs i' k
           VM.write assocs j' k
           !n1 <- VM.read numberOfElements i'
