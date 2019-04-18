@@ -239,3 +239,15 @@ executables:
   abc124-d:
     main:                Main.hs
     source-dirs:         abc124-d
+
+  aising2019-a:
+    main:                Main.hs
+    source-dirs:         aising2019-a
+
+  aising2019-b:
+    main:                Main.hs
+    source-dirs:         aising2019-b
+
+  aising2019-c:
+    main:                Main.hs
+    source-dirs:         aising2019-c
