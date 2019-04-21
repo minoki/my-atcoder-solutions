@@ -251,3 +251,11 @@ executables:
   aising2019-c:
     main:                Main.hs
     source-dirs:         aising2019-c
+
+  tenka1-2019-c:
+    main: Main.hs
+    source-dirs: tenka1-2019-c
+
+  tenka1-2019-e:
+    main: Main.hs
+    source-dirs: tenka1-2019-e
