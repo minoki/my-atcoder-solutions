@@ -267,3 +267,19 @@ executables:
   arc017-a:
     main: Main.hs
     source-dirs: arc017-a
+
+  abc086-a:
+    main: Main.hs
+    source-dirs: abc086-a
+
+  abc081-a:
+    main: Main.hs
+    source-dirs: abc081-a
+
+  abc081-b:
+    main: Main.hs
+    source-dirs: abc081-b
+
+  abc087-b:
+    main: Main.hs
+    source-dirs: abc087-b
