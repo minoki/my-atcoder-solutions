@@ -263,3 +263,7 @@ executables:
   tenka1-2019-e:
     main: Main.hs
     source-dirs: tenka1-2019-e
+
+  arc017-a:
+    main: Main.hs
+    source-dirs: arc017-a
