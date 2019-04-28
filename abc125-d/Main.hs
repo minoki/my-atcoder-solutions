@@ -1,12 +1,18 @@
-{-# LANGUAGE ScopedTypeVariables #-}
 import Data.Int
-import Data.List
 import qualified Data.Vector.Unboxed as U
 import qualified Data.ByteString.Char8 as BS
 
+readInt :: BS.ByteString -> Int
+readInt s = case BS.readInt s of
+              Just (x, _) -> x
+
+readInt64 :: BS.ByteString -> Int64
+readInt64 s = case BS.readInteger s of
+              Just (x, _) -> fromInteger x
+
 main = do
-  n :: Int <- readLn
-  xs :: U.Vector Int64 <- U.fromListN n . map (read . BS.unpack) . BS.words <$> BS.getLine
+  n <- readInt <$> BS.getLine
+  xs <- U.fromListN n . map readInt64 . BS.words <$> BS.getLine
   let negatives = U.filter (<= 0) xs
   if even (U.length negatives)
     then print $ U.sum $ U.map abs xs
