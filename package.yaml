@@ -284,3 +284,19 @@ executables:
   abc087-b:
     main: Main.hs
     source-dirs: abc087-b
+
+  abc125-a:
+    main: Main.hs
+    source-dirs: abc125-a
+
+  abc125-b:
+    main: Main.hs
+    source-dirs: abc125-b
+
+  abc125-c:
+    main: Main.hs
+    source-dirs: abc125-c
+
+  abc125-d:
+    main: Main.hs
+    source-dirs: abc125-d
