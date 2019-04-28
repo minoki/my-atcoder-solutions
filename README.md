@@ -117,7 +117,7 @@ Haskellを主に使用。
 
 * A - Zero Sum Ranges
 
-# AtCoder Beginner Contest 124
+## AtCoder Beginner Contest 124 (2019-04-13)
 
 <https://atcoder.jp/contests/abc124>
 
@@ -127,3 +127,78 @@ Haskellを主に使用。
 * B - Great Ocean View
 * C - Coloring Colorfully
 * D - Handstand
+
+## Tenka1 Programmer Contest 2019 (2019-04-20)
+
+<https://atcoder.jp/contests/tenka1-2019>
+
+解いた問題：
+
+* C - Stones
+* E - Polynomial Divisors
+
+## AtCoder Beginner Contest 125 (2019-04-27)
+
+<https://atcoder.jp/contests/abc125>
+
+解いた問題：
+
+* A - Biscuit Generator
+* B - Resale
+* C - GCD on Blackboard
+* D - Flipping Signs
+
+## エイシングプログラミングコンテスト2019
+
+<https://atcoder.jp/contests/aising2019>
+
+解いた問題：
+
+* A - Bulletin Board
+* B - Contests
+* C - Alternating Path
+
+## Xmas Contest 2018
+
+<https://atcoder.jp/contests/xmascon18>
+
+解いた問題：
+
+* J - Japanese Exponentation
+
+## AtCoder Regular Contest 017
+
+<https://atcoder.jp/contests/arc017/>
+
+解いた問題：
+
+* A - 素数、コンテスト、素数
+
+## AtCoder Beginner Contest 086
+
+<https://atcoder.jp/contests/abc086/>
+
+解いた問題：
+
+* A - Product
+    * [AtCoderに登録したら解くべき精選過去問10問](https://qiita.com/drken/items/fd4e5e3630d0f5859067) 1問目
+
+## AtCoder Beginner Contest 081
+
+<https://atcoder.jp/contests/abc081/>
+
+解いた問題：
+
+* A - Placing Marbles
+    * AtCoderに登録したら解くべき精選過去問10問 2問目
+* B - Shift only
+    * AtCoderに登録したら解くべき精選過去問10問 3問目
+
+## AtCoder Beginner Contest 087
+
+<https://atcoder.jp/contests/abc087/>
+
+解いた問題：
+
+* B - Coins
+    * AtCoderに登録したら解くべき精選過去問10問 4問目
