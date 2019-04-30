@@ -1,11 +1,12 @@
 import Control.Monad
+import Data.Char
 import qualified Data.Vector.Unboxed as V
 import qualified Data.Vector.Unboxed.Mutable as VM
 import qualified Data.ByteString.Char8 as BS
 
 main = do
   n <- readLn -- 2 <= n <= 10^5
-  h <- V.fromListN n . map (read . BS.unpack) . BS.words <$> BS.getLine
+  h <- V.unfoldrN n (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
   -- hi <= 10^4
   let dp = V.create $ do
         dp <- VM.new n
