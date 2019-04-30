@@ -27,19 +27,22 @@ lcsTable s t = V.scanr' (\ !x !v ->
         !n = BS.length t
         !t' = U.fromListN n (BS.unpack t)
 
+solve :: BS.ByteString -> BS.ByteString -> BS.ByteString
+solve !s !t = let !table = lcsTable s t
+                  !m = BS.length s
+                  !n = BS.length t
+                  recon !i !j | i >= m || j >= n = Nothing
+                              | x == y = let !i' = i+1 ; !j' = j+1
+                                         in Just (x, (i', j'))
+                              | (table V.! (i+1)) U.! j >= (table V.! i) U.! (j+1) = recon (i+1) j
+                              | otherwise = recon i (j+1)
+                    where x = BS.index s i
+                          y = BS.index t j
+                  (result, _) = BS.unfoldrN (fromIntegral $ (table V.! 0) U.! 0) (\(!i,!j) -> recon i j) (0,0)
+              in result
+
 main = do
   s <- BS.getLine
   t <- BS.getLine
   -- BS.length s <= 3000, BS.length t <= 3000, BS.all isAsciiLower s, BS.all isAsciiLower t
-  let !table = lcsTable s t
-      !m = BS.length s
-      !n = BS.length t
-  let recon !i !j | i >= m || j >= n = Nothing
-                  | x == y = let !i' = i+1 ; !j' = j+1
-                             in Just (x, (i', j'))
-                  | (table V.! (i+1)) U.! j >= (table V.! i) U.! (j+1) = recon (i+1) j
-                  | otherwise = recon i (j+1)
-        where x = BS.index s i
-              y = BS.index t j
-      (result, _) = BS.unfoldrN (fromIntegral $ (table V.! 0) U.! 0) (\(!i,!j) -> recon i j) (0,0)
-  BS.putStrLn result
+  BS.putStrLn (solve s t)
