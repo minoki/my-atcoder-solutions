@@ -300,3 +300,7 @@ executables:
   abc125-d:
     main: Main.hs
     source-dirs: abc125-d
+
+  agc033-a:
+    main: Main.hs
+    source-dirs: agc033-a
