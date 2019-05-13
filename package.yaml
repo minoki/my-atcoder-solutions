@@ -304,3 +304,19 @@ executables:
   agc033-a:
     main: Main.hs
     source-dirs: agc033-a
+
+  diverta2019-a:
+    main: Main.hs
+    source-dirs: diverta2019-a
+
+  diverta2019-b:
+    main: Main.hs
+    source-dirs: diverta2019-b
+
+  diverta2019-c:
+    main: Main.hs
+    source-dirs: diverta2019-c
+
+  diverta2019-d:
+    main: Main.hs
+    source-dirs: diverta2019-d
