@@ -320,3 +320,7 @@ executables:
   diverta2019-d:
     main: Main.hs
     source-dirs: diverta2019-d
+
+  diverta2019-e:
+    main: Main.hs
+    source-dirs: diverta2019-e
