@@ -9,25 +9,30 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.IntMap.Strict as IntMap
 import Control.Monad
 import Control.Monad.ST
+import Data.STRef
 
 type Weight = Int
 type Tree = IntMap.IntMap (U.Vector (Int,Weight))
 
+data GrowableVector s a = GV {-# UNPACK #-} !Int !(U.MVector s a)
+
 buildTree :: U.Vector (Int,Int,Weight) -> IntMap.IntMap (U.Vector (Int,Weight))
 buildTree edges = runST $ do
   let insert' key val m = do
-        IntMap.alterF (\m -> case m of
-                          Nothing -> do
-                            vec <- UM.new 1
-                            UM.write vec 0 val
-                            return $ Just (1, vec)
-                          Just (len, vec) -> do
-                            vec' <- if len < UM.length vec then return vec else UM.grow vec len
-                            UM.write vec' len val
-                            let !len' = len+1
-                            return $ Just (len', vec')
-                      ) key m
-      adjust (len, mvec) = do
+        case IntMap.lookup key m of
+          Nothing -> do
+            vec <- UM.new 1
+            UM.write vec 0 val
+            ref <- newSTRef (GV 1 vec)
+            return $ IntMap.insert key ref m
+          Just ref -> do
+            GV len vec <- readSTRef ref
+            vec' <- if len < UM.length vec then return vec else UM.grow vec len
+            UM.write vec' len val
+            writeSTRef ref $ GV (len+1) vec'
+            return m
+      adjust ref = do
+        GV len mvec <- readSTRef ref
         vec <- U.unsafeFreeze mvec
         return (U.take len vec)
   m <- U.foldM' (\m (u,v,w) -> insert' v (u,w) m >>= insert' u (v,w)) IntMap.empty edges
