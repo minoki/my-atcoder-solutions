@@ -324,3 +324,27 @@ executables:
   diverta2019-e:
     main: Main.hs
     source-dirs: diverta2019-e
+
+  abc126-a:
+    main: Main.hs
+    source-dirs: abc126-a
+
+  abc126-b:
+    main: Main.hs
+    source-dirs: abc126-b
+
+  abc126-c:
+    main: Main.hs
+    source-dirs: abc126-c
+
+  abc126-d:
+    main: Main.hs
+    source-dirs: abc126-d
+
+  abc126-e:
+    main: Main.hs
+    source-dirs: abc126-e
+
+  abc126-f:
+    main: Main.hs
+    source-dirs: abc126-f
