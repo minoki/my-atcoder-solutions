@@ -348,3 +348,19 @@ executables:
   abc126-f:
     main: Main.hs
     source-dirs: abc126-f
+
+  abc128-a:
+    main: Main.hs
+    source-dirs: abc128-a
+
+  abc128-b:
+    main: Main.hs
+    source-dirs: abc128-b
+
+  abc128-c:
+    main: Main.hs
+    source-dirs: abc128-c
+
+  abc128-d:
+    main: Main.hs
+    source-dirs: abc128-d
