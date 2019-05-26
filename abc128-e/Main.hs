@@ -23,7 +23,7 @@ search !v !f !i !j
 main = do
   [n,q] <- map (read . BS.unpack) . BS.words <$> BS.getLine
   -- 1 <= n <= 2*10^5, 1 <= q <= 2*10^5
-  works <- sequence $ replicate n $ do
+  works <- replicateM n $ do
     [s,t,x] <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
     return (s,t,x)
   let works' = U.fromListN n $ sortBy (\(s,t,x) (s',t',x') -> compare x' x <> compare s s' <> compare t t') works

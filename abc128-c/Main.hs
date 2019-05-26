@@ -6,7 +6,7 @@ import qualified Data.Vector.Unboxed as U
 
 main = do
   [n,m] <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
-  d <- sequence $ replicate m $ do
+  d <- replicateM m $ do
     _:ss <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
     return ss
   ps <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
