@@ -364,3 +364,7 @@ executables:
   abc128-d:
     main: Main.hs
     source-dirs: abc128-d
+
+  abc128-e:
+    main: Main.hs
+    source-dirs: abc128-e
