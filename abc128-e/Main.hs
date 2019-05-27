@@ -3,32 +3,40 @@
 import Data.Char
 import Data.List
 import Data.Monoid
+import Data.Bits
 import Control.Monad
+import Control.Monad.ST
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.Vector.Unboxed as U
+import qualified Data.Vector.Unboxed.Mutable as UM
 
-data Tree a = Leaf !Int !Int a
-            | Bin !Int !Int !Int (Tree a) (Tree a)
+-- let k = search v f i j
+-- => (k < j || f k) && (k == i || not (f (k-1)))
+search :: (U.Unbox a) => U.Vector a -> (a -> Bool) -> Int -> Int -> Int
+search !v !f !i !j
+  | i >= j = error "bad input"
+  | f (v U.! i) = i
+  | otherwise = loop i j
+  where loop !i !j | j == i + 1 = j
+                   | f (v U.! k) = loop i k
+                   | otherwise = loop k j
+          where k = (i + j) `quot` 2
 
-getAt :: Tree a -> Int -> a
-getAt (Leaf a b x) !i | a <= i && i < b = x
-                      | otherwise = error "out of range"
-getAt (Bin a b c l r) !i | i < b = getAt l i
-                         | otherwise = getAt r i
+query :: Int -> Int -> U.Vector Int -> Int
+query !i !depth vec = minimum [vec U.! (2^k - 1 + (i `shiftR` (depth - k))) | k <- [0..depth]]
 
-fill :: Int -> Int -> a -> Tree a -> Tree a
-fill !a !b x l@(Leaf a' b' y)
-  | b < a' || b' < a = l
-  -- a' <= b && a <= b':
-  | a <= a' && b' <= b = Leaf a' b' x
-  | a <= a' {- , b < b' -} = Bin a' b b' (Leaf a' b x) (Leaf b b' y)
-  | {- a' < a, -} b' <= b = Bin a' a b' (Leaf a' a y) (Leaf a b' x)
-  | otherwise {- a' < a, b < b' -} = Bin a' a b' (Leaf a' a y) (Bin a b b' (Leaf a b x) (Leaf b b' y))
-fill !a !b x (Bin a' b' c' l r)
-  | a <= a' && c' <= b = Leaf a b x
-  | b <= b' = Bin a' b' c' (fill a b x l) r
-  | b' <= a = Bin a' b' c' l (fill a b x r)
-  | otherwise {- a < b', b' < b -} = Bin a' b' c' (fill a b' x l) (fill b' b x r)
+fill :: Int -> Int -> Int -> Int -> UM.MVector s Int -> ST s ()
+fill !i !j !x !depth vec | i < j = doFill 0 depth i j
+                         | otherwise = return ()
+  where
+    -- Invariant: 0 <= k*2^l <= i < j <= (k+1)*2^l <= 2^depth
+    doFill !k 0 !i !j | i == k, j == k+1 = UM.write vec (2^depth - 1 + k) x
+                      | otherwise = error "fill"
+    doFill !k l !i !j | i == (k `shiftL` l) && j == ((k+1) `shiftL` l) = UM.write vec (2^(depth-l) - 1 + k) x
+                      | m <= i = doFill (2*k+1) (l-1) i j
+                      | j <= m = doFill (2*k) (l-1) i j
+                      | otherwise = doFill (2*k) (l-1) i m >> doFill (2*k+1) (l-1) m j
+      where m = (2*k+1) `shiftL` (l-1)
 
 main = do
   [n,q] <- map (read . BS.unpack) . BS.words <$> BS.getLine
@@ -40,9 +48,20 @@ main = do
   ds <- U.replicateM q $ do
     Just (d, _) <- BS.readInt <$> BS.getLine
     return d
-  let result = foldl' (\r (s,t,x) ->
-                         let !s' = s - x
-                             !t' = t - x
-                         in fill s' t' x r
-                      ) (Leaf 0 (10^9+1) (-1)) works'
-  U.forM_ ds $ \d -> print (getAt result d :: Int)
+  -- q <= 2^depth
+  let depth = ceiling (logBase 2 (fromIntegral q) :: Double) :: Int
+  let result = U.create $ do
+        vec <- UM.replicate (2^(depth+1)-1) (10^9+1)
+        forM_ works' $ \(s,t,x) -> do
+          let !s' = s - x
+              !t' = t - x
+              i0 = search ds (\d -> s' <= d) 0 q
+              i1 | i0 == q = q
+                 | otherwise = search ds (\d -> t' <= d) i0 q
+          fill i0 i1 x depth vec
+        return vec
+  forM_ [0..q-1] $ \i -> do
+    let v = query i depth result
+    if v == 10^9+1
+      then putStrLn "-1"
+      else print v
