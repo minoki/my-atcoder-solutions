@@ -1,6 +1,7 @@
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 import Control.Monad
+import Data.Char
 import Data.Int
 import Data.Bits
 import qualified Data.Vector as V
@@ -96,11 +97,16 @@ instance Monoid NNInt_Max where
   mempty = NNInt_Max 0
   NNInt_Max x `mappend` NNInt_Max y = NNInt_Max (max x y)
 
+readIntPair :: BS.ByteString -> (Int, Int)
+readIntPair s = let Just (a, s') = BS.readInt s
+                    Just (b, _) = BS.readInt $ BS.dropWhile isSpace s'
+                in (a, b)
+
 main = do
-  [n,m] :: [Int] <- map (read . BS.unpack) . BS.words <$> BS.getLine
+  (n,m) <- readIntPair <$> BS.getLine
   -- 2 <= n <= 10^5, 1 <= m <= 10^5
   edges :: U.Vector (Int, Int) <- U.replicateM m $ do
-    [x,y] <- map (read . BS.unpack) . BS.words <$> BS.getLine
+    (x,y) <- readIntPair <$> BS.getLine
     -- 1 <= x, y <= n
     return (x - 1, y - 1 :: Int)
   let edges_to :: V.Vector IntSet.IntSet
