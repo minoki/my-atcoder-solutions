@@ -6,19 +6,29 @@ import Data.Monoid
 import Control.Monad
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.Vector.Unboxed as U
-import qualified Data.Vector.Unboxed.Mutable as UM
 
--- let k = search v f i j
--- => (k < j || f k) && (k == i || not (f (k-1)))
-search :: (U.Unbox a) => U.Vector a -> (a -> Bool) -> Int -> Int -> Int
-search !v !f !i !j
-  | i >= j = error "bad input"
-  | f (v U.! i) = i
-  | otherwise = loop i j
-  where loop !i !j | j == i + 1 = j
-                   | f (v U.! k) = loop i k
-                   | otherwise = loop k j
-          where k = (i + j) `quot` 2
+data Tree a = Leaf !Int !Int a
+            | Bin !Int !Int !Int (Tree a) (Tree a)
+
+getAt :: Tree a -> Int -> a
+getAt (Leaf a b x) !i | a <= i && i < b = x
+                      | otherwise = error "out of range"
+getAt (Bin a b c l r) !i | i < b = getAt l i
+                         | otherwise = getAt r i
+
+fill :: Int -> Int -> a -> Tree a -> Tree a
+fill !a !b x l@(Leaf a' b' y)
+  | b < a' || b' < a = l
+  -- a' <= b && a <= b':
+  | a <= a' && b' <= b = Leaf a' b' x
+  | a <= a' {- , b < b' -} = Bin a' b b' (Leaf a' b x) (Leaf b b' y)
+  | {- a' < a, -} b' <= b = Bin a' a b' (Leaf a' a y) (Leaf a b' x)
+  | otherwise {- a' < a, b < b' -} = Bin a' a b' (Leaf a' a y) (Bin a b b' (Leaf a b x) (Leaf b b' y))
+fill !a !b x (Bin a' b' c' l r)
+  | a <= a' && c' <= b = Leaf a b x
+  | b <= b' = Bin a' b' c' (fill a b x l) r
+  | b' <= a = Bin a' b' c' l (fill a b x r)
+  | otherwise {- a < b', b' < b -} = Bin a' b' c' (fill a b' x l) (fill b' b x r)
 
 main = do
   [n,q] <- map (read . BS.unpack) . BS.words <$> BS.getLine
@@ -26,23 +36,13 @@ main = do
   works <- replicateM n $ do
     [s,t,x] <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
     return (s,t,x)
-  let works' = U.fromListN n $ sortBy (\(s,t,x) (s',t',x') -> compare x' x <> compare s s' <> compare t t') works
+  let works' = sortBy (\(s,t,x) (s',t',x') -> compare x' x <> compare s s' <> compare t t') works
   ds <- U.replicateM q $ do
     Just (d, _) <- BS.readInt <$> BS.getLine
     return d
-  let result = U.create $ do
-        vec <- UM.replicate q (-1)
-        U.forM_ works' $ \(s,t,x) -> do
-          let !s' = s - x
-              !t' = t - x
-              i0 = search ds (\d -> s' <= d) 0 q
-              -- loop !i | i == q || t' <= ds U.! i = return ()
-              --         | otherwise = UM.write vec i x >> loop (i+1)
-              i1 | i0 == q = q
-                 | otherwise = search ds (\d -> t' <= d) i0 q
-          UM.set (UM.slice i0 (i1 - i0) vec) x
-          -- forM_ [i0..(min i1 q)-1] $ \i -> do
-          --   UM.unsafeWrite vec i x
-          -- loop i0
-        return vec
-  U.forM_ result print
+  let result = foldl' (\r (s,t,x) ->
+                         let !s' = s - x
+                             !t' = t - x
+                         in fill s' t' x r
+                      ) (Leaf 0 (10^9+1) (-1)) works'
+  U.forM_ ds $ \d -> print (getAt result d :: Int)
