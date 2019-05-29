@@ -1,9 +1,7 @@
 -- https://github.com/minoki/my-atcoder-solutions
 {-# LANGUAGE BangPatterns #-}
-import Data.List
 import Data.Char
 import qualified Data.ByteString.Char8 as BS
-import qualified Data.Vector.Unboxed as U
 
 readIntPair :: BS.ByteString -> (Int, Int)
 readIntPair s = let Just (a, s') = BS.readInt s
@@ -12,7 +10,8 @@ readIntPair s = let Just (a, s') = BS.readInt s
 
 main = do
   (n,m) <- readIntPair <$> BS.getLine
-  (ls,rs) <- fmap U.unzip $ U.replicateM m (readIntPair <$> BS.getLine)
-  let maxL = U.maximum ls
-      minR = U.minimum rs
-  print $ max 0 (minR - maxL + 1)
+  let loop !maxL !minR 0 = print $ max 0 (minR - maxL + 1)
+      loop !maxL !minR i = do
+        (l,r) <- readIntPair <$> BS.getLine
+        loop (max l maxL) (min r minR) (i - 1)
+  loop minBound maxBound m
