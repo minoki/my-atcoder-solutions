@@ -50,29 +50,9 @@ instance Fractional N where
   recip (N x) = N (recipM x)
   fromRational = undefined
 
-{-
-factL :: [N]
-factL = 1 : zipWith (*) factL (map fromInteger [1..])
-
-factFromN :: Int -> Int -> N -> V.Vector N
-factFromN n m factN = V.scanl' (\a b -> a * fromIntegral b) factN (V.enumFromN (n+1) (m-1))
--}
-
 factV :: U.Vector N
 factV = U.scanl' (*) 1 (U.enumFromN 1 (fromIntegral modulo - 1))
-{-  factFromN 0 200000 1
-  <> factFromN 200000 (500000 - 200000) 177247
-  <> factFromN 500000 (700000 - 500000) 2
-  <> factFromN 700000 (total - 700000) 426941
-  where
-    total = fromIntegral modulo :: Int
--}
 
--- factM n == factL !! n == product (map fromInteger [1..n])
--- factM 150000 == 835006
--- factM 300000 == 142803
--- factM 600000 == 715492
--- factM 800000 == 598805
 factM :: Int64 -> N
 factM n | n < modulo = factV U.! fromIntegral n
         | otherwise = 0
