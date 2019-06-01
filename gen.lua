@@ -18,6 +18,7 @@ if fh then
 end
 fh = assert(io.open(filename, "w"))
 fh:write([[
+-- https://github.com/minoki/my-atcoder-solutions
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE BangPatterns #-}
 import Data.Char
