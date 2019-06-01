@@ -1,6 +1,8 @@
 -- https://github.com/minoki/my-atcoder-solutions
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies #-}
 import Data.Char
 import Data.Int
 import Data.List
@@ -10,6 +12,10 @@ import qualified Data.Vector.Unboxed as U
 import qualified Data.Vector.Unboxed.Mutable as UM
 import qualified Data.ByteString.Char8 as BS
 import Data.Monoid
+---
+import Data.Coerce
+import qualified Data.Vector.Generic
+import qualified Data.Vector.Generic.Mutable
 
 exEuclid :: (Eq a, Integral a) => a -> a -> (a, a, a)
 exEuclid !f !g = loop 1 0 0 1 f g
@@ -44,21 +50,31 @@ instance Fractional N where
   recip (N x) = N (recipM x)
   fromRational = undefined
 
+{-
 factL :: [N]
 factL = 1 : zipWith (*) factL (map fromInteger [1..])
-factFrom :: Integer -> N -> [N]
-factFrom n v0 = let xs = v0 : zipWith (*) xs (map fromInteger [n+1..])
-                in xs
-factV :: V.Vector N
-factV = sl 200000 factL
-  <> sl (500000 - 200000) (factFrom 200000 177247)
-  <> sl (700000 - 500000) (factFrom 500000 2)
-  <> sl (total - 700000) (factFrom 700000 426941)
+
+factFromN :: Int -> Int -> N -> V.Vector N
+factFromN n m factN = V.scanl' (\a b -> a * fromIntegral b) factN (V.enumFromN (n+1) (m-1))
+-}
+
+factV :: U.Vector N
+factV = U.scanl' (*) 1 (U.enumFromN 1 (fromIntegral modulo - 1))
+{-  factFromN 0 200000 1
+  <> factFromN 200000 (500000 - 200000) 177247
+  <> factFromN 500000 (700000 - 500000) 2
+  <> factFromN 700000 (total - 700000) 426941
   where
     total = fromIntegral modulo :: Int
-    sl n xs = V.fromListN n (take n xs)
+-}
+
+-- factM n == factL !! n == product (map fromInteger [1..n])
+-- factM 150000 == 835006
+-- factM 300000 == 142803
+-- factM 600000 == 715492
+-- factM 800000 == 598805
 factM :: Int64 -> N
-factM n | n < modulo = factV V.! fromIntegral n
+factM n | n < modulo = factV U.! fromIntegral n
         | otherwise = 0
 
 solve :: Int -> Int -> Int -> N
@@ -75,3 +91,34 @@ main = do
   replicateM_ q $ do
     [x,d,n] <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
     print (solve x d n)
+
+---
+
+newtype instance UM.MVector s N = MV_N (UM.MVector s Int64)
+newtype instance U.Vector N = V_N (U.Vector Int64)
+
+instance Data.Vector.Generic.Mutable.MVector UM.MVector N where -- needs MultiParamTypeClasses here
+  basicLength (MV_N mv) = Data.Vector.Generic.Mutable.basicLength mv
+  basicUnsafeSlice i l (MV_N mv) = MV_N (Data.Vector.Generic.Mutable.basicUnsafeSlice i l mv)
+  basicOverlaps (MV_N mv) (MV_N mv') = Data.Vector.Generic.Mutable.basicOverlaps mv mv'
+  basicUnsafeNew l = MV_N <$> Data.Vector.Generic.Mutable.basicUnsafeNew l
+  basicInitialize (MV_N mv) = Data.Vector.Generic.Mutable.basicInitialize mv
+  basicUnsafeReplicate i x = MV_N <$> Data.Vector.Generic.Mutable.basicUnsafeReplicate i (coerce x)
+  basicUnsafeRead (MV_N mv) i = coerce <$> Data.Vector.Generic.Mutable.basicUnsafeRead mv i
+  basicUnsafeWrite (MV_N mv) i x = Data.Vector.Generic.Mutable.basicUnsafeWrite mv i (coerce x)
+  basicClear (MV_N mv) = Data.Vector.Generic.Mutable.basicClear mv
+  basicSet (MV_N mv) x = Data.Vector.Generic.Mutable.basicSet mv (coerce x)
+  basicUnsafeCopy (MV_N mv) (MV_N mv') = Data.Vector.Generic.Mutable.basicUnsafeCopy mv mv'
+  basicUnsafeMove (MV_N mv) (MV_N mv') = Data.Vector.Generic.Mutable.basicUnsafeMove mv mv'
+  basicUnsafeGrow (MV_N mv) n = MV_N <$> Data.Vector.Generic.Mutable.basicUnsafeGrow mv n
+
+instance Data.Vector.Generic.Vector U.Vector N where -- needs MultiParamTypeClasses here
+  basicUnsafeFreeze (MV_N mv) = V_N <$> Data.Vector.Generic.basicUnsafeFreeze mv
+  basicUnsafeThaw (V_N v) = MV_N <$> Data.Vector.Generic.basicUnsafeThaw v
+  basicLength (V_N v) = Data.Vector.Generic.basicLength v
+  basicUnsafeSlice i l (V_N v) = V_N (Data.Vector.Generic.basicUnsafeSlice i l v)
+  basicUnsafeIndexM (V_N v) i = coerce <$> Data.Vector.Generic.basicUnsafeIndexM v i
+  basicUnsafeCopy (MV_N mv) (V_N v) = Data.Vector.Generic.basicUnsafeCopy mv v
+  elemseq (V_N v) x y = Data.Vector.Generic.elemseq v (coerce x) y
+
+instance U.Unbox N
