@@ -14,24 +14,15 @@ import qualified Data.Vector.Unboxed.Mutable as UM
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Generic.Mutable as GM
 import qualified Data.ByteString.Char8 as BS
-import Data.Array (Array)
-import Data.Array.Unboxed (UArray)
-import Data.Array.IArray
-import System.Environment (getArgs)
-import Debug.Trace
 ---
 import Data.Coerce
 import qualified Data.Vector.Generic
 import qualified Data.Vector.Generic.Mutable
-import qualified Data.Array.Base
-import qualified Unsafe.Coerce
 
 type NN = N
-type Mat = UArray (Int,Int) NN
 type Vec = U.Vector NN
 {-
 type NN = Rational
-type Mat = Array (Int,Int) Rational
 type Vec = V.Vector NN
 -}
 
@@ -41,15 +32,6 @@ main = do
   let s = U.sum as :: Int
       !as' = G.map fromIntegral (V.convert as) :: Vec
       !s' = recip (fromIntegral s) :: NN
-      coeffMat :: Mat
-      coeffMat = array ((1,1),(2^n-1,2^n)) $
-        [ ((i,j),v)
-        | i <- [1..2^n-1]
-        , j <- [1..2^n-1]
-        , let v | i == j = 1 - (as' G.! 0) * s'
-                | otherwise = - (as' G.! (i `xor` j)) * s'
-        ]
-        ++ [((i,2^n),1) | i <- [1..2^n-1]]
       coeffMatV :: V.Vector Vec
       coeffMatV = V.generate (2^n-1) $ \i ->
         G.generate (2^n) $ \j ->
@@ -58,39 +40,13 @@ main = do
         else if i == j
              then 1 - (as' G.! 0) * s'
              else - (as' G.! ((i+1) `xor` (j+1))) * s'
-  let result = solve coeffMat
   let resultV = solveV coeffMatV
   print 0
-  args <- getArgs
-  case args of
-    "array":_ -> do
-      forM_ [1..2^n-1] $ \j -> do
-        print $ result!(j,2^n) / result!(j,j)
-    _ -> do -- print resultV
-            V.imapM_ (\j row -> print $ row G.! (2^n-1) / row G.! j) resultV
+  flip V.imapM_ resultV $ \j row ->
+    print $ row G.! (2^n-1) / row G.! j
 
--- 行基本変形を行う
-solve :: (Eq k, Fractional k, IArray arr k) => arr (Int,Int) k -> arr (Int,Int) k
-solve m | i0 == j0 = loop i0 m
-        | otherwise = error "not supported"
-  where
-    b@((i0,j0),(iN,_)) = bounds m
-    loop !i !m
-      | i > iN = m
-      | otherwise = case [(k,w) | k <- [i..iN], let w = m!(k,i), w /= 0] of
-          (!k,!w):_ -> let !r = recip w -- r == recip (m!(k,i))
-                       in loop (i+1) $ array b
-                          [ ((i'',j),v)
-                          | (i',j) <- indices m
-                          , let !v | i' == k = m!(i',j)
-                                   | otherwise = m!(i',j) - m!(k,j)*m!(i',i)*r
-                                !i''  | i' == k = i
-                                      | i' == i = k
-                                      | otherwise = i'
-                          ]
-          [] -> error "singular matrix"
-
-solveV :: forall vector k. (Eq k, Fractional k, G.Vector vector k, Show k, Show (vector k)) => V.Vector (vector k) -> V.Vector (vector k)
+-- Gaussian elimination
+solveV :: forall vector k. (Eq k, Fractional k, G.Vector vector k) => V.Vector (vector k) -> V.Vector (vector k)
 solveV m = runST $ do
   m' <- V.mapM G.thaw m
   m'' <- V.thaw m'
@@ -98,7 +54,7 @@ solveV m = runST $ do
   subst (n-2) m''
   m''' <- V.unsafeFreeze m''
   V.mapM G.unsafeFreeze m'''
-  -- V.createT is not available on AtCoder
+  -- V.createT is not available on AtCoder😢
   where
     !n = V.length m
     elim :: Int -> VM.MVector s (G.Mutable vector s k) -> ST s ()
@@ -141,12 +97,6 @@ solveV m = runST $ do
           loop (i + 1) rhs
           -- GM.set (GM.drop (i+1) $ GM.take n row) 0
           subst (i - 1) m
-{-
-    dump :: VM.MVector s (G.Mutable vector s k) -> ST s ()
-    dump m = do m' <- V.freeze m
-                fr <- V.mapM G.freeze m'
-                traceShow fr $ return ()
--}
 
 ---
 
@@ -213,17 +163,3 @@ instance Data.Vector.Generic.Vector U.Vector N where -- needs MultiParamTypeClas
   elemseq (V_N v) x y = Data.Vector.Generic.elemseq v (coerce x) y
 
 instance U.Unbox N
-
-unsafeCoerce_UArray_N_Int :: UArray i N -> UArray i Int
-unsafeCoerce_UArray_N_Int = Unsafe.Coerce.unsafeCoerce
-unsafeCoerce_UArray_Int_N :: UArray i Int -> UArray i N
-unsafeCoerce_UArray_Int_N = Unsafe.Coerce.unsafeCoerce
-
-instance Data.Array.Base.IArray UArray N where
-  bounds arr = Data.Array.Base.bounds (unsafeCoerce_UArray_N_Int arr)
-  numElements arr = Data.Array.Base.numElements (unsafeCoerce_UArray_N_Int arr)
-  unsafeArray lu ies = unsafeCoerce_UArray_Int_N $ Data.Array.Base.unsafeArray lu (coerce ies)
-  unsafeAt arr i = coerce (Data.Array.Base.unsafeAt (unsafeCoerce_UArray_N_Int arr) i)
-  unsafeReplace arr ies = unsafeCoerce_UArray_Int_N (Data.Array.Base.unsafeReplace (unsafeCoerce_UArray_N_Int arr) (coerce ies))
-  unsafeAccum f arr ies = unsafeCoerce_UArray_Int_N (Data.Array.Base.unsafeAccum (coerce f) (unsafeCoerce_UArray_N_Int arr) ies)
-  unsafeAccumArray f e lu ies = unsafeCoerce_UArray_Int_N (Data.Array.Base.unsafeAccumArray (coerce f) (coerce e) lu ies)
