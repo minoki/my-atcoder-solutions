@@ -14,6 +14,7 @@ import qualified Data.Vector.Unboxed.Mutable as UM
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Generic.Mutable as GM
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.IntSet as IntSet
 ---
 import Data.Coerce
 import qualified Data.Vector.Generic
@@ -26,24 +27,56 @@ type NN = Rational
 type Vec = V.Vector NN
 -}
 
+buildIxMap :: U.Vector Int -> (U.Vector Int, V.Vector IntSet.IntSet)
+buildIxMap xs =
+  let !classify = V.create $ do
+        vec <- VM.replicate 1000 IntSet.empty
+        flip U.imapM_ xs $ \i x -> do
+          -- 1 <= x <= 1000
+          VM.modify vec (IntSet.insert i) (x - 1)
+        return vec
+      !classify' = V.filter (not . IntSet.null) classify
+      !ixToReducedIx = U.create $ do
+        vec <- UM.new (U.length xs)
+        flip V.imapM_ classify' $ \j s -> do
+          forM_ (IntSet.toList s) $ \i -> do
+            UM.write vec i j
+        return vec
+  in (ixToReducedIx, classify')
+
 main = do
   n :: Int <- readLn -- 1 <= n <= 18
   as <- U.unfoldrN (2^n) (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
   let s = U.sum as :: Int
       !as' = G.map fromIntegral (V.convert as) :: Vec
       !s' = recip (fromIntegral s) :: NN
+      toReducedIx :: U.Vector Int
+      fromReducedIx :: V.Vector IntSet.IntSet
+      (toReducedIx, fromReducedIx) = buildIxMap (U.tail as)
+      m = V.length fromReducedIx
       coeffMatV :: V.Vector Vec
-      coeffMatV = V.generate (2^n-1) $ \i ->
-        G.generate (2^n) $ \j ->
-        if j == 2^n-1
-        then 1
-        else if i == j
-             then 1 - (as' G.! 0) * s'
-             else - (as' G.! ((i+1) `xor` (j+1))) * s'
+      coeffMatV = V.generate m $ \l -> -- 0 <= l < m
+        let i = IntSet.findMin (fromReducedIx V.! l) -- 0 <= i < U.length as - 1 = 2^n-1
+        in G.generate (m + 1) $ \k ->
+          if k == m
+          then 1
+          else -- 0 <= k < m
+            if l == k
+            then 1 - s' * sum [ as' G.! ((i+1) `xor` (j+1))
+                              | j <- IntSet.toList (fromReducedIx V.! k)
+                              -- toReducedIx ! j == l
+                              -- 0 <= j < U.length as - 1 = 2^n-1
+                              ]
+            else - s' * sum [ as' G.! ((i+1) `xor` (j+1))
+                            | j <- IntSet.toList (fromReducedIx V.! k)
+                            -- toReducedIx ! j == l
+                            -- 0 <= j < U.length as - 1 = 2^n-1
+                            ]
   let resultV = solveV coeffMatV
   print 0
-  flip V.imapM_ resultV $ \j row ->
-    print $ row G.! (2^n-1) / row G.! j
+  U.forM_ toReducedIx $ \i -> do
+    let row = resultV V.! i
+    print $ row G.! m
 
 -- Gaussian elimination
 solveV :: forall vector k. (Eq k, Fractional k, G.Vector vector k) => V.Vector (vector k) -> V.Vector (vector k)
