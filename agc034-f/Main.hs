@@ -5,15 +5,20 @@
 {-# LANGUAGE TypeFamilies #-}
 import Data.Char (isSpace)
 import Data.Bits (xor)
-import Control.Monad (forM_)
--- import qualified Data.Vector as V
--- import qualified Data.Vector.Mutable as VM
+import Control.Monad (forM_,when)
+import Control.Monad.ST
+import qualified Data.Vector as V
+import qualified Data.Vector.Mutable as VM
 import qualified Data.Vector.Unboxed as U
 import qualified Data.Vector.Unboxed.Mutable as UM
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Generic.Mutable as GM
 import qualified Data.ByteString.Char8 as BS
 import Data.Array (Array)
 import Data.Array.Unboxed (UArray)
 import Data.Array.IArray
+import System.Environment (getArgs)
+import Debug.Trace
 ---
 import Data.Coerce
 import qualified Data.Vector.Generic
@@ -34,21 +39,35 @@ main = do
   n :: Int <- readLn -- 1 <= n <= 18
   as <- U.unfoldrN (2^n) (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
   let s = U.sum as :: Int
-      !as' = U.map fromIntegral as :: Vec
+      !as' = G.map fromIntegral (V.convert as) :: Vec
       !s' = recip (fromIntegral s) :: NN
       coeffMat :: Mat
       coeffMat = array ((1,1),(2^n-1,2^n)) $
         [ ((i,j),v)
         | i <- [1..2^n-1]
         , j <- [1..2^n-1]
-        , let v | i == j = 1 - (as' U.! 0) * s'
-                | otherwise = - (as' U.! (i `xor` j)) * s'
+        , let v | i == j = 1 - (as' G.! 0) * s'
+                | otherwise = - (as' G.! (i `xor` j)) * s'
         ]
         ++ [((i,2^n),1) | i <- [1..2^n-1]]
+      coeffMatV :: V.Vector Vec
+      coeffMatV = V.generate (2^n-1) $ \i ->
+        G.generate (2^n) $ \j ->
+        if j == 2^n-1
+        then 1
+        else if i == j
+             then 1 - (as' G.! 0) * s'
+             else - (as' G.! ((i+1) `xor` (j+1))) * s'
   let result = solve coeffMat
+  let resultV = solveV coeffMatV
   print 0
-  forM_ [1..2^n-1] $ \j -> do
-    print $ result!(j,2^n) / result!(j,j)
+  args <- getArgs
+  case args of
+    "array":_ -> do
+      forM_ [1..2^n-1] $ \j -> do
+        print $ result!(j,2^n) / result!(j,j)
+    _ -> do -- print resultV
+            V.imapM_ (\j row -> print $ row G.! (2^n-1) / row G.! j) resultV
 
 -- 行基本変形を行う
 solve :: (Eq k, Fractional k, IArray arr k) => arr (Int,Int) k -> arr (Int,Int) k
@@ -61,12 +80,73 @@ solve m | i0 == j0 = loop i0 m
       | otherwise = case [(k,w) | k <- [i..iN], let w = m!(k,i), w /= 0] of
           (!k,!w):_ -> let !r = recip w -- r == recip (m!(k,i))
                        in loop (i+1) $ array b
-                          [ ((if i' == k then i else if i' == i then k else i',j),v)
+                          [ ((i'',j),v)
                           | (i',j) <- indices m
-                          , let v | i' == k = m!(i',j)
-                                  | otherwise = m!(i',j) - m!(k,j)*m!(i',i)*r
+                          , let !v | i' == k = m!(i',j)
+                                   | otherwise = m!(i',j) - m!(k,j)*m!(i',i)*r
+                                !i''  | i' == k = i
+                                      | i' == i = k
+                                      | otherwise = i'
                           ]
           [] -> error "singular matrix"
+
+solveV :: forall vector k. (Eq k, Fractional k, G.Vector vector k, Show k, Show (vector k)) => V.Vector (vector k) -> V.Vector (vector k)
+solveV m = runST $ do
+  m' <- V.mapM G.thaw m
+  m'' <- V.thaw m'
+  elim 0 m''
+  subst (n-2) m''
+  m''' <- V.unsafeFreeze m''
+  V.mapM G.unsafeFreeze m'''
+  -- V.createT is not available on AtCoder
+  where
+    !n = V.length m
+    elim :: Int -> VM.MVector s (G.Mutable vector s k) -> ST s ()
+    elim !i !m
+      | i >= n = return ()
+      | otherwise = do
+          let findK k | k >= n = error "singular matrix"
+                      | otherwise = do
+                          row <- VM.read m k
+                          w <- GM.read row i
+                          if w == 0
+                            then findK (k + 1)
+                            else return (k,row,w)
+          (k,rowK,w) <- findK i -- i <= k
+          let !r = recip w -- r == recip (m!(k,i))
+          forM_ [i..GM.length rowK - 1] $ \j -> do
+            GM.modify rowK (\x -> x * r) j
+          -- GM.set (GM.take i rowK) 0
+          forM_ [i..n-1] $ \i' -> do
+            row' <- VM.read m i'
+            when (i' /= k) $ do
+              y <- GM.read row' i -- m!(i',i)
+              let !yy = y
+              forM_ [i..GM.length row' - 1] $ \j -> do
+                z <- GM.read rowK j
+                GM.modify row' (\x -> x - z * yy) j
+          VM.swap m i k
+          elim (i+1) m
+    subst :: Int -> VM.MVector s (G.Mutable vector s k) -> ST s ()
+    subst !i !m
+      | i < 0 = return ()
+      | otherwise = do
+          row <- VM.read m i
+          let loop !j !x | j >= n = GM.write row n x
+                         | otherwise = do
+                             c <- GM.read row j
+                             y <- VM.read m j >>= (`GM.read` n)
+                             loop (j+1) (x - c * y)
+          rhs <- GM.read row n
+          loop (i + 1) rhs
+          -- GM.set (GM.drop (i+1) $ GM.take n row) 0
+          subst (i - 1) m
+{-
+    dump :: VM.MVector s (G.Mutable vector s k) -> ST s ()
+    dump m = do m' <- V.freeze m
+                fr <- V.mapM G.freeze m'
+                traceShow fr $ return ()
+-}
 
 ---
 
@@ -147,4 +227,3 @@ instance Data.Array.Base.IArray UArray N where
   unsafeReplace arr ies = unsafeCoerce_UArray_Int_N (Data.Array.Base.unsafeReplace (unsafeCoerce_UArray_N_Int arr) (coerce ies))
   unsafeAccum f arr ies = unsafeCoerce_UArray_Int_N (Data.Array.Base.unsafeAccum (coerce f) (unsafeCoerce_UArray_N_Int arr) ies)
   unsafeAccumArray f e lu ies = unsafeCoerce_UArray_Int_N (Data.Array.Base.unsafeAccumArray (coerce f) (coerce e) lu ies)
-
