@@ -15,6 +15,7 @@ import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Generic.Mutable as GM
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.IntSet as IntSet
+import System.IO
 ---
 import Data.Coerce
 import qualified Data.Vector.Generic
@@ -27,19 +28,19 @@ type NN = Rational
 type Vec = V.Vector NN
 -}
 
-buildIxMap :: U.Vector Int -> (U.Vector Int, V.Vector IntSet.IntSet)
+buildIxMap :: U.Vector Int -> (U.Vector Int, V.Vector [Int])
 buildIxMap xs =
   let !classify = V.create $ do
-        vec <- VM.replicate 1000 IntSet.empty
+        vec <- VM.replicate 1000 []
         flip U.imapM_ xs $ \i x -> do
           -- 1 <= x <= 1000
-          VM.modify vec (IntSet.insert i) (x - 1)
+          VM.modify vec (i :) (x - 1)
         return vec
-      !classify' = V.filter (not . IntSet.null) classify
+      !classify' = V.filter (not . null) classify
       !ixToReducedIx = U.create $ do
         vec <- UM.new (U.length xs)
         flip V.imapM_ classify' $ \j s -> do
-          forM_ (IntSet.toList s) $ \i -> do
+          forM_ s $ \i -> do
             UM.write vec i j
         return vec
   in (ixToReducedIx, classify')
@@ -51,28 +52,25 @@ main = do
       !as' = G.map fromIntegral (V.convert as) :: Vec
       !s' = recip (fromIntegral s) :: NN
       toReducedIx :: U.Vector Int
-      fromReducedIx :: V.Vector IntSet.IntSet
+      fromReducedIx :: V.Vector [Int]
       (toReducedIx, fromReducedIx) = buildIxMap (U.tail as)
       m = V.length fromReducedIx
       coeffMatV :: V.Vector Vec
       coeffMatV = V.generate m $ \l -> -- 0 <= l < m
-        let i = IntSet.findMin (fromReducedIx V.! l) -- 0 <= i < U.length as - 1 = 2^n-1
-        in G.generate (m + 1) $ \k ->
-          if k == m
-          then 1
-          else -- 0 <= k < m
-            if l == k
-            then 1 - s' * sum [ as' G.! ((i+1) `xor` (j+1))
-                              | j <- IntSet.toList (fromReducedIx V.! k)
-                              -- toReducedIx ! j == l
-                              -- 0 <= j < U.length as - 1 = 2^n-1
-                              ]
-            else - s' * sum [ as' G.! ((i+1) `xor` (j+1))
-                            | j <- IntSet.toList (fromReducedIx V.! k)
-                            -- toReducedIx ! j == l
-                            -- 0 <= j < U.length as - 1 = 2^n-1
-                            ]
+        G.create $ do
+          let !i = head (fromReducedIx V.! l) -- 0 <= i < U.length as - 1 = 2^n-1
+          row <- GM.new (m + 1)
+          forM_ [0..m-1] $ \k ->
+            GM.write row k (- s' * sum [ as' G.! ((i+1) `xor` (j+1))
+                                       | j <- fromReducedIx V.! k
+                                       -- toReducedIx ! j == k
+                                       -- 0 <= j < U.length as - 1 = 2^n-1
+                                       ])
+          GM.modify row (+ 1) l
+          GM.write row m 1
+          return row
   let resultV = solveV coeffMatV
+  -- hPutStrLn stderr $ show ("m",m)
   print 0
   U.forM_ toReducedIx $ \i -> do
     let row = resultV V.! i
@@ -107,13 +105,12 @@ solveV m = runST $ do
             GM.modify rowK (\x -> x * r) j
           -- GM.set (GM.take i rowK) 0
           forM_ [i..n-1] $ \i' -> do
-            row' <- VM.read m i'
             when (i' /= k) $ do
+              row' <- VM.read m i'
               y <- GM.read row' i -- m!(i',i)
-              let !yy = y
               forM_ [i..GM.length row' - 1] $ \j -> do
                 z <- GM.read rowK j
-                GM.modify row' (\x -> x - z * yy) j
+                GM.modify row' (\x -> x - z * y) j
           VM.swap m i k
           elim (i+1) m
     subst :: Int -> VM.MVector s (G.Mutable vector s k) -> ST s ()
