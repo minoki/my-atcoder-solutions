@@ -1,5 +1,4 @@
 -- https://github.com/minoki/my-atcoder-solutions
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -51,11 +50,17 @@ instance Fractional N where
   fromRational = undefined
 
 factV :: U.Vector N
-factV = U.scanl' (*) 1 (U.enumFromN 1 (fromIntegral modulo - 1))
+factV = U.scanl' (*) 1 (U.enumFromN 1 (fromIntegral (modulo - 1)))
 
 factM :: Int64 -> N
 factM n | n < modulo = factV U.! fromIntegral n
         | otherwise = 0
+
+invFactM :: Int64 -> N
+invFactM n | n < modulo = if even n
+                          then - factV U.! fromIntegral (modulo - n - 1)
+                          else factV U.! fromIntegral (modulo - n - 1)
+           | otherwise = error "invFactM: divide by zero"
 
 solve :: Int -> Int -> Int -> N
 solve x 0 n = (fromIntegral x)^n
@@ -64,12 +69,15 @@ solve !x !d !n = let !x' = fromIntegral x :: N
                      !xd = unwrapN (x' / d')
                  in if xd + fromIntegral n - 1 >= modulo
                     then 0
-                    else d'^n * factM (xd + fromIntegral n - 1) / factM (xd - 1)
+                    else d'^n * factM (xd + fromIntegral n - 1) * invFactM (xd - 1)
 
 main = do
-  q :: Int <- readLn
+  q <- readLn
   replicateM_ q $ do
-    [x,d,n] <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
+    Just (x, s) <- BS.readInt <$> BS.getLine
+    let Just (d, s') = BS.readInt $ BS.dropWhile isSpace s
+        Just (n, _) = BS.readInt $ BS.dropWhile isSpace s'
+    -- [x,d,n] <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
     print (solve x d n)
 
 ---
