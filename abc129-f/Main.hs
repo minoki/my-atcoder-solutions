@@ -36,7 +36,8 @@ solve proxy l a b =
                               ]
                mat'@(Mat3x3 arr1) = mat ^ (k' - k)
                Mat3x3 arr2 = mat' * mat
-               e = sum $ drop d $ zipWith (*) [1..18] $ zipWith (-) (tail kk) kk
+               e :: Integer
+               e = sum $ drop d $ zipWith (*) [1..18] $ map fromIntegral $ zipWith (-) (tail kk) kk
          ]
 
 main = do
