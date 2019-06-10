@@ -1,5 +1,7 @@
 # AtCoderのオレオレ解答集 by @mod_poppo
 
+[AtCoderプロフィール](https://atcoder.jp/users/mod_poppo)
+
 Haskellを主に使用。
 
 ## Typical DP Contest
@@ -182,6 +184,8 @@ Haskellを主に使用。
 
 * A - Product
     * [AtCoderに登録したら解くべき精選過去問10問](https://qiita.com/drken/items/fd4e5e3630d0f5859067) 1問目
+* C - Traveling
+    * AtCoderに登録したら解くべき精選過去問10問 10問目
 
 ## AtCoder Beginner Contest 081
 
@@ -202,3 +206,114 @@ Haskellを主に使用。
 
 * B - Coins
     * AtCoderに登録したら解くべき精選過去問10問 4問目
+
+## AtCoder Beginner Contest 083
+
+<https://atcoder.jp/contests/abc083/>
+
+解いた問題：
+
+* B - Some Sums
+    * AtCoderに登録したら解くべき精選過去問10問 5問目
+
+## AtCoder Beginner Contest 088
+
+<https://atcoder.jp/contests/abc088/>
+
+* B - Card Game for Two
+    * AtCoderに登録したら解くべき精選過去問10問 6問目
+
+## AtCoder Beginner Contest 085
+
+<https://atcoder.jp/contests/abc085/>
+
+* B - Kagami Mochi
+    * AtCoderに登録したら解くべき精選過去問10問 7問目
+* C - Otoshidama
+    * AtCoderに登録したら解くべき精選過去問10問 8問目
+
+## AtCoder Beginner Contest 049
+
+<https://atcoder.jp/contests/abc049/>
+
+* C - 白昼夢 / Daydream
+    * AtCoderに登録したら解くべき精選過去問10問 9問目
+
+## diverta 2019 Programming Contest (2019-05-11)
+
+<https://atcoder.jp/contests/diverta2019>
+
+解いた問題：
+
+* A - Consecutive Integers
+* B - RGB Boxes
+* C - AB Substrings
+* D - DivRem Number
+
+## AtCoder Beginner Contest 126 (2019-05-19)
+
+<https://atcoder.jp/contests/abc126>
+
+解いた問題：
+
+* A - Changing a Character
+* B - YYMM or MMYY
+* C - Dice and Coin
+* D - Even Relation
+* E - 1 or 2
+* F - XOR Matching
+
+## AtCoder Beginner Contest 127
+
+<https://atcoder.jp/contests/abc127>
+
+解いた問題：
+
+* A - Ferris Wheel
+* B - Algae
+* C - Prison
+* D - Integer Cards
+
+## AtCoder Beginner Contest 128 (2019-05-26)
+
+<https://atcoder.jp/contests/abc128>
+
+解いた問題：
+
+* A - Apple Pie
+* B - Guidebook
+* C - Switches
+* D - equeue
+* E - Roadwork
+
+## M-SOLUTIONS プロコンオープン (2019-06-01)
+
+<https://atcoder.jp/contests/m-solutions2019>
+
+解いた問題：
+
+* A - Sum of Interior Angles
+* B - Sumo
+* E - Product of Arithmetic Progression
+
+## AtCoder Grand Contest 034 (2019-06-02)
+
+<https://atcoder.jp/contests/agc034>
+
+解いた問題：
+
+* A - Kenken Race
+* B - ABC
+
+## AtCoder Beginner Contest 129 (2019-06-09)
+
+<https://atcoder.jp/contests/abc129>
+
+解いた問題：
+
+* A - Airplane
+* B - Balance
+* C - Typical Stairs
+* D - Lamp
+* E - Sum Equals Xor
+* F - Takahashi's Basics in Education and Learning
