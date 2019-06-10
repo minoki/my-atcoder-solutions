@@ -21,9 +21,9 @@ fh:write([[
 -- https://github.com/minoki/my-atcoder-solutions
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE BangPatterns #-}
-import Data.Char
+import Data.Char (isSpace)
 import Data.Int
-import Data.List
+import Data.List (unfoldr)
 import Control.Monad
 import qualified Data.Vector.Unboxed as U
 import qualified Data.Vector.Unboxed.Mutable as UM
