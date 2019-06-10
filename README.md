@@ -4,6 +4,8 @@
 
 Haskellを主に使用。
 
+Haskellで競技プログラミングをやるテクニックは「[Haskellで競技プログラミングをやる](competitive-programming-with-haskell.md)」を参照。
+
 ## Typical DP Contest
 
 <https://tdpc.contest.atcoder.jp/>
