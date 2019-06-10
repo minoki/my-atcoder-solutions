@@ -36,6 +36,12 @@ ghc-options:
 library:
   source-dirs: lib
 
+tests:
+  doctest:
+    main: doctests.hs
+    dependencies:
+    - doctest
+
 executables:
 #  tdpc-a:
 #    main:                Main.hs
