@@ -39,6 +39,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * H - Grid 1
 * I - Coins
 * J - Sushi
+* K - Stones
 
 ## AtCoder Beginner Contest 032
 
