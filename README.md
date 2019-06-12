@@ -38,6 +38,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * G - Longest Path
 * H - Grid 1
 * I - Coins
+* J - Sushi
 
 ## AtCoder Beginner Contest 032
 
