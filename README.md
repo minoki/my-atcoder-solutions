@@ -8,7 +8,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 ## Typical DP Contest
 
-<https://tdpc.contest.atcoder.jp/>
+<https://atcoder.jp/contests/tdpc>
 
 解いた問題：
 
