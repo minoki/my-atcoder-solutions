@@ -40,6 +40,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * I - Coins
 * J - Sushi
 * K - Stones
+* L - Deque
 
 ## AtCoder Beginner Contest 032
 
