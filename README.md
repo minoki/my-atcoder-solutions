@@ -323,3 +323,16 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * D - Lamp
 * E - Sum Equals Xor
 * F - Takahashi's Basics in Education and Learning
+
+## diverta 2019 Programming Contest 2
+
+<https://atcoder.jp/contests/diverta2019-2>
+
+解いた問題：
+
+* [x] A - Ball Distribution
+* [x] B - Picking Up
+* [x] C - Successive Subtraction
+* [x] D - Squirrel Merchant
+* [ ] E - Balanced Piles
+* [ ] F - Diverta City
