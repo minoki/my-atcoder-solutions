@@ -19,19 +19,24 @@ exchangeOne !gA !sA !bA !gB !sB !bB !n =
       l = sortDown $ filter (\(d,x) -> d > 0) [(dg, gA), (ds, sA), (db, bA)]
   in case l of
        [] -> n
-       [(dx,xA)] -> let (qx,rx) = n `quotRem` xA
-                        -- A で qx * gA 個のどんぐりを売却し、金 qx グラムを得る。
-                        -- B で金 qx グラムを売却し、 qx * gB 個のどんぐりを得る。
-                    in n + qx * dx
-       [(dx,xA),(dy,yA)] -> maximum [ n + x * dx + y * dy
-                                    | x <- [0..n `quot` xA]
-                                    , let y = (n - x * xA) `quot` yA
-                                    ]
-       [(dx,xA),(dy,yA),(dz,zA)] -> maximum [ n + x * dx + y * dy + z * dz
-                                            | x <- [0..n `quot` xA]
-                                            , y <- [0..(n - x * xA) `quot` yA]
-                                            , let z = (n - x * xA - y * yA) `quot` zA
-                                            ]
+       [(!dx,!xA)] ->
+         let (qx,rx) = n `quotRem` xA
+             -- A で qx * gA 個のどんぐりを売却し、金 qx グラムを得る。
+             -- B で金 qx グラムを売却し、 qx * gB 個のどんぐりを得る。
+         in n + qx * dx
+       [(!dx,!xA),(!dy,!yA)] ->
+         n + maximum [ x * dx + y * dy
+                     | x <- [0..n `quot` xA]
+                     , let y = (n - x * xA) `quot` yA
+                     ]
+       [(!dx,!xA),(!dy,!yA),(!dz,!zA)] ->
+         n + maximum [ x * dx + maximum [ y * dy + z * dz
+                                        | y <- [0..n' `quot` yA]
+                                        , let z = (n' - y * yA) `quot` zA
+                                        ]
+                     | x <- [0..n `quot` xA]
+                     , let !n' = n - x * xA
+                     ]
 
 main = do
   n <- readLn
