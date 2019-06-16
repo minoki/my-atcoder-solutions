@@ -56,10 +56,12 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Colorful Subsequence
-* B - Reversi
-* C - Differ by 1 Bit
-* D - A Sequence of Permutations
+* [x] A - Colorful Subsequence
+* [x] B - Reversi
+* [x] C - Differ by 1 Bit
+* [x] D - A Sequence of Permutations
+* [ ] E - Snuke the Phantom Thief
+* [ ] F - Walk on Graph
 
 ## AtCoder Grand Contest 032 (2019-03-23)
 
@@ -67,8 +69,12 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Limited Insertion
-* B - Balanced Neighbors
+* [x] A - Limited Insertion
+* [x] B - Balanced Neighbors
+* [ ] C - Three Circuits
+* [ ] D - Rotation Sort
+* [ ] E - Modulo Pairing
+* [ ] F - One Third
 
 ## AtCoder Beginner Contest 122 (2019-03-24)
 
@@ -76,10 +82,10 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Double Helix
-* B - ATCoder
-* C - GeT AC
-* D - We Like AGC
+* [x] A - Double Helix
+* [x] B - ATCoder
+* [x] C - GeT AC
+* [x] D - We Like AGC
     * Fast: 5項間漸化式を立てた（配列を使わない）。ただし想定解法と同じく O(n)
     * Small: 想定解法
     * MatPow, PolyDiv: O(log n) の解法
@@ -91,10 +97,10 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - White Cells
-* B - Can you solve this?
-* C - Energy Drink Collector
-* D - XOR World
+* [x] A - White Cells
+* [x] B - Can you solve this?
+* [x] C - Energy Drink Collector
+* [x] D - XOR World
 
 ## AtCoder Beginner Contest 120
 
@@ -102,10 +108,10 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Favorite Sound
-* B - K-th Common Divisor
-* C - Unification
-* D - Decayed Bridges
+* [x] A - Favorite Sound
+* [x] B - K-th Common Divisor
+* [x] C - Unification
+* [x] D - Decayed Bridges
 
 ## エクサウィザーズ 2019 (2019-03-30)
 
@@ -113,9 +119,12 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Regular Triangle
-* B - Red or Blue
-* E - Black or White
+* [x] A - Regular Triangle
+* [x] B - Red or Blue
+* [ ] C - Snuke the Wizard
+* [ ] D - Modulo Operations
+* [x] E - Black or White
+* [ ] F - More Realistic Manhattan Distance
 
 ## AtCoder Grand Contest 023
 
@@ -131,10 +140,10 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Buttons
-* B - Great Ocean View
-* C - Coloring Colorfully
-* D - Handstand
+* [x] A - Buttons
+* [x] B - Great Ocean View
+* [x] C - Coloring Colorfully
+* [x] D - Handstand
 
 ## Tenka1 Programmer Contest 2019 (2019-04-20)
 
@@ -142,8 +151,10 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* C - Stones
-* E - Polynomial Divisors
+* [x] C - Stones
+* [ ] D - Three Colors
+* [x] E - Polynomial Divisors
+* [ ] F - Banned X
 
 ## AtCoder Beginner Contest 125 (2019-04-27)
 
@@ -151,10 +162,10 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Biscuit Generator
-* B - Resale
-* C - GCD on Blackboard
-* D - Flipping Signs
+* [x] A - Biscuit Generator
+* [x] B - Resale
+* [x] C - GCD on Blackboard
+* [x] D - Flipping Signs
 
 ## エイシングプログラミングコンテスト2019
 
@@ -251,10 +262,12 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Consecutive Integers
-* B - RGB Boxes
-* C - AB Substrings
-* D - DivRem Number
+* [x] A - Consecutive Integers
+* [x] B - RGB Boxes
+* [x] C - AB Substrings
+* [x] D - DivRem Number
+* [ ] E - XOR Partitioning
+* [ ] F - Edge Ordering
 
 ## AtCoder Beginner Contest 126 (2019-05-19)
 
@@ -262,12 +275,12 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Changing a Character
-* B - YYMM or MMYY
-* C - Dice and Coin
-* D - Even Relation
-* E - 1 or 2
-* F - XOR Matching
+* [x] A - Changing a Character
+* [x] B - YYMM or MMYY
+* [x] C - Dice and Coin
+* [x] D - Even Relation
+* [x] E - 1 or 2
+* [x] F - XOR Matching
 
 ## AtCoder Beginner Contest 127
 
@@ -275,10 +288,12 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Ferris Wheel
-* B - Algae
-* C - Prison
-* D - Integer Cards
+* [x] A - Ferris Wheel
+* [x] B - Algae
+* [x] C - Prison
+* [x] D - Integer Cards
+* [ ] E - Cell Distance
+* [ ] F - Absolute Minima
 
 ## AtCoder Beginner Contest 128 (2019-05-26)
 
@@ -286,11 +301,12 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Apple Pie
-* B - Guidebook
-* C - Switches
-* D - equeue
-* E - Roadwork
+* [x] A - Apple Pie
+* [x] B - Guidebook
+* [x] C - Switches
+* [x] D - equeue
+* [x] E - Roadwork
+* [ ] F - Frog Jump
 
 ## M-SOLUTIONS プロコンオープン (2019-06-01)
 
@@ -298,9 +314,12 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Sum of Interior Angles
-* B - Sumo
-* E - Product of Arithmetic Progression
+* [x] A - Sum of Interior Angles
+* [x] B - Sumo
+* [ ] C - Best-of-(2n-1)
+* [ ] D - Maximum Sum of Minimum
+* [x] E - Product of Arithmetic Progression
+* [ ] F - Random Tournament
 
 ## AtCoder Grand Contest 034 (2019-06-02)
 
@@ -308,8 +327,12 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Kenken Race
-* B - ABC
+* [x] A - Kenken Race
+* [x] B - ABC
+* [ ] C - Tests
+* [ ] D - Manhattan Max Matching
+* [ ] E - Complete Compress
+* [ ] F - RNG and XOR
 
 ## AtCoder Beginner Contest 129 (2019-06-09)
 
@@ -317,12 +340,12 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Airplane
-* B - Balance
-* C - Typical Stairs
-* D - Lamp
-* E - Sum Equals Xor
-* F - Takahashi's Basics in Education and Learning
+* [x] A - Airplane
+* [x] B - Balance
+* [x] C - Typical Stairs
+* [x] D - Lamp
+* [x] E - Sum Equals Xor
+* [x] F - Takahashi's Basics in Education and Learning
 
 ## diverta 2019 Programming Contest 2 (2019-06-15)
 
