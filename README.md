@@ -324,7 +324,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * E - Sum Equals Xor
 * F - Takahashi's Basics in Education and Learning
 
-## diverta 2019 Programming Contest 2
+## diverta 2019 Programming Contest 2 (2019-06-15)
 
 <https://atcoder.jp/contests/diverta2019-2>
 
@@ -336,3 +336,16 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] D - Squirrel Merchant
 * [ ] E - Balanced Piles
 * [ ] F - Diverta City
+
+## AtCoder Beginner Contest 130 (2019-06-16)
+
+<https://atcoder.jp/contests/abc130>
+
+解いた問題：
+
+* [x] A - Rounding
+* [x] B - Bounding
+* [x] C - Rectangle Cutting
+* [x] D - Enough Array
+* [x] E - Common Subsequence
+* [x] F - Minimum Bounding Box
