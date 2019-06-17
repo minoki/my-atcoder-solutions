@@ -6,7 +6,6 @@ import Data.Int
 import Data.List (unfoldr)
 import Control.Monad
 import qualified Data.Vector.Unboxed as U
-import qualified Data.Vector.Unboxed.Mutable as UM
 import qualified Data.ByteString.Char8 as BS
 import Data.Array.ST
 import Control.Monad.ST
