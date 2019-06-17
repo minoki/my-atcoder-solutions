@@ -3,23 +3,32 @@
 {-# LANGUAGE TypeFamilies #-}
 module ModularArithmetic where
 import Data.Int
+import Data.Coerce
 
 modulo :: Int64
 modulo = 10^9+7
 addMod, subMod, mulMod :: Int64 -> Int64 -> Int64
-addMod !x !y = (x + y) `rem` modulo
-subMod !x !y = (x - y) `mod` modulo
+addMod !x !y | x + y >= modulo = x + y - modulo
+             | otherwise = x + y
+subMod !x !y | x >= y = x - y
+             | otherwise = x - y + modulo
 mulMod !x !y = (x * y) `rem` modulo
+{-# INLINE addMod #-}
+{-# INLINE subMod #-}
 
 newtype N = N { unwrapN :: Int64 } deriving (Eq)
 instance Show N where
   show (N x) = show x
 instance Num N where
-  N x + N y = N ((x + y) `rem` modulo)
-  N x - N y = N ((x - y) `mod` modulo)
-  N x * N y = N ((x * y) `rem` modulo)
+  (+) = coerce addMod
+  (-) = coerce subMod
+  (*) = coerce mulMod
   fromInteger n = N (fromInteger (n `mod` fromIntegral modulo))
   abs = undefined; signum = undefined
+  {-# INLINE (+) #-}
+  {-# INLINE (-) #-}
+  {-# INLINE (*) #-}
+  {-# INLINE fromInteger #-}
 
 exEuclid :: (Eq a, Integral a) => a -> a -> (a, a, a)
 exEuclid !f !g = loop 1 0 0 1 f g
@@ -36,6 +45,11 @@ divM :: Int64 -> Int64 -> Int64
 divM !x !y = x `mulMod` recipM y
 
 instance Fractional N where
-  N x / N y = N (divM x y)
-  recip (N x) = N (recipM x)
+  (/) = coerce divM
+  recip = coerce recipM
   fromRational = undefined
+
+{-# RULES
+"^9/Int" forall x. x ^ (9 :: Int) = let u = x; v = u * u * u in v * v * v
+"^9/Integer" forall x. x ^ (9 :: Integer) = let u = x; v = u * u * u in v * v * v
+ #-}
