@@ -30,6 +30,29 @@
     * 1次元ならVector, 2次元以上ならArrayを使う。ただ、2次元以上でもVectorを使う（Vectorを2段重ね）と良いことがある。Vectorには `scan` があったり、タプルのunboxed vectorを作れたりするので。
     * ランダムアクセスせず、fold系操作をするだけならリストでも良い。
     * 固定長整数や浮動小数点数からなる配列にはunboxed array / vector を使う。newtypeと相性が悪いので注意。unboxed vectorの要素型はタプルでも良い。
+    * unboxed arrayを使えば通るアルゴリズムが、boxed arrayだと（たとえ正格評価していても）TLEする場合がある。
+        * STUArray版 (AC): https://atcoder.jp/contests/dp/submissions/5890874
+        * STArray版 (TLE): https://atcoder.jp/contests/dp/submissions/5890929 `writeArray` 時に `$!` で正格評価しているにも関わらずTLEとなった。
+
+`newArray` を使うと型が曖昧になる恐れがある（`IOArray` vs `IOUArray`, `STArray` vs `STUArray`）。
+TypeApplications拡張が使えない今は
+
+```haskell
+asSTUArray :: ST s (STUArray s i e) -> ST s (STUArray s i e)
+asSTUArray = id
+```
+
+みたいな補助関数を作って
+
+```haskell
+arr <- asSTUArray $ newArray ((0,0),(n,n)) 0
+```
+
+という風にするのが精一杯か。
+
+## 全探索
+
+リスト内包表記やリストモナドを使うと、ネストが深くならずに済む。
 
 ## モジュラー計算
 
@@ -51,6 +74,53 @@ ABC129-Fのように法が実行時に与えられる場合は、reflectionパ�
 * @mod_poppo, [型を実行時に作る：怖くないリフレクション - Qiita](https://qiita.com/mod_poppo/items/50ad2c0ee66171cc1ee9), 2017年12月22日
 
 に書いたようなテクニックを使うと良い。ただし、Zero/Succのみで自然数を表現すると値に比例する数のデータ構築子を使うことになってよろしくない。自然数の2進表現を使うと値の桁数に比例する数のデータ構築子で済む（元論文を参照）。
+
+### `rem` vs `mod`
+
+整数を割ったあまりを計算する方法としてHaskell標準には `rem` と `mod` があり、これらはオペランドの符号が異なる場合の挙動が違う。
+
+```haskell
+> 7 `mod` 5
+2
+> (-7) `mod` 5
+3
+> 7 `mod` (-5)
+-3
+> (-7) `mod` (-5)
+-2
+> 7 `rem` 5
+2
+> (-7) `rem` 5
+-2
+> 7 `rem` (-5)
+2
+> (-7) `rem` (-5)
+-2
+```
+
+実行速度で言うと、 **`rem`の方が速い** ので、どちらでも良い場合（両方のオペランドが非負であるとわかっている場合）は `rem` を使おう。
+
+### `10^9` の定数畳み込み
+
+ソースコードに `10^9` と書いた場合、GHCは `10^9` の定数畳み込みを行わない。
+素直にゼロを9個書くという手もあるのだが、ここでは可読性を重視してゼロを9個書かずに済ませる方法を考える。
+
+べき乗関数 `(^)` に関しては指数が小さい時にrewrite ruleによって単純な積へ書き換えられるが、現状は5乗までしか定義されていない。
+9乗に関するrewrite ruleを定義してやれば、 `10^9` の定数畳み込みが行われるようになる：
+
+```haskell
+{-# RULES
+"^9/Int" forall x. x ^ (9 :: Int) = let u = x; v = u * u * u in v * v * v
+"^9/Integer" forall x. x ^ (9 :: Integer) = let u = x; v = u * u * u in v * v * v
+ #-}
+```
+
+最後の行の `#-}` が行頭にあるのとGHC 7.10.3が文句を言うので、空白を開けておくこと。
+
+別の方法としては、NumDecimals拡張を有効にして `1e9` と書くという方法がある。
+こちらの方が手軽かもしれない。
+
+NumericUnderscores拡張を使うとゼロが多い整数リテラルを `1_000_000_000` という風に区切り文字を入れて書けるが、GHC 8.6以降というかなり新しいGHCが必要となる。
 
 ## 可変な変数
 
@@ -105,6 +175,8 @@ unsafeCoerce_UArray_Int_N = Unsafe.Coerce.unsafeCoerce
 
 を参照せよ。
 
+競技プログラミング外で自由にパッケージを使える環境の場合、unboxed vectorに関しては、筆者が作っている [unboxing-vectorパッケージ](https://hackage.haskell.org/package/unboxing-vector) を使うとnewtype時に記述量が少なくて済む。
+
 ## IntSet
 
 `IntSet` を舐める際にいちいちリストに変換するのがだるい、という場合は
@@ -133,7 +205,9 @@ foldMap_IntSet f set = go set
 
 ## ソート
 
-標準のリストのソートは遅い。
+標準のリストのソート (`Data.List.sort`) は遅い。
+
+標準のリストのソートを使ったせいでTLEとなったケースには筆者は（まだ）遭遇していないが、より高速な代替手段を用意しておくと精神的に楽である。
 
 vector-algorithmsパッケージの各種アルゴリズムが使えると良いのだが、現状使えないようなので自分でソートアルゴリズムを書こう。
 実装例は [abc127-d/Main.hs](abc127-d/Main.hs) を参照（この問題は標準のリストのソートでも十分ACできる）。
