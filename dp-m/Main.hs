@@ -22,15 +22,15 @@ main = do
   let naive :: N
       naive = (U.! k) $ U.foldl' (\v a ->
                                     -- v ! i: i 個の飴を分け合うやり方の数
-                                     U.generate (k + 1) (\l -> sum [v U.! i | i <- [max 0 (l - a)..l]]
-                                                              )
-                                  ) (U.generate (k + 1) (\i -> if i == 0 then 1 else 0)) xs
+                                     U.generate (k + 1) (\l -> sum [v U.! i | i <- [max 0 (l - a)..l]])
+                                 ) (U.generate (k + 1) (\i -> if i == 0 then 1 else 0)) xs
   -}
   let vec :: U.Vector N
       vec = U.foldl' (\v a ->
                         -- v ! i : i 個以下の飴を分け合うやり方の数
-                        U.postscanl' (+) 0 $ U.zipWith (-) v (U.replicate (a + 1) 0 <> v)
+                        U.postscanl' (+) 0 $ U.accumulate_ (-) v (U.enumFromN (a + 1) (k - a)) v
                      ) (U.replicate (k + 1) 1) xs
+      -- Note: `U.accumulate_ (-) v (U.enumFromN (a + 1) (k - a)) v` is equivalent to `U.zipWith (-) v (U.replicate (a + 1) 0 <> v)`
   print $ if k == 0 then 1 else vec U.! k - vec U.! (k - 1)
 
 ---
