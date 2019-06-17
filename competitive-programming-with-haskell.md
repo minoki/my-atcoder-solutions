@@ -1,5 +1,8 @@
 # Haskellで競技プログラミングをやる
 
+この文書ではHaskell (GHC)で競技プログラミングをやる上での泥臭い話をする。
+Haskellで競技プログラミングをやる上での一般論とかは「リンク集」の記事を参照。
+
 ## リンク集
 
 * @hsjoihs, [AtCoder に登録したら解くべき精選過去問 10 問を Haskell で解いてみた – Qiita](https://qiita.com/hsjoihs/items/25a08b426196ab2b9bb0), 2018年3月20日
@@ -115,7 +118,7 @@ ABC129-Fのように法が実行時に与えられる場合は、reflectionパ�
  #-}
 ```
 
-最後の行の `#-}` が行頭にあるのとGHC 7.10.3が文句を言うので、空白を開けておくこと。
+最後の行の `#-}` が行頭にあるとGHC 7.10.3が文句を言うので、空白を開けておくこと。
 
 別の方法としては、NumDecimals拡張を有効にして `1e9` と書くという方法がある。
 こちらの方が手軽かもしれない。
@@ -227,7 +230,7 @@ vector-algorithmsパッケージの各種アルゴリズムが使えると良い
     * Vectorのscan系とかfold系とかの関数をうまく使うと自前で添字アクセスすることがなくなる。
 * INLINEやSPECIALIZE等のプラグマもあまり意味がなさそう。複数のモジュールからなるプログラムの場合はこれらのプラグマが意味を持つが、AtCoderに投げるHaskellコードは単一のモジュールからなるので。
 
-## AtCoderのGHCが古い問題
+## AtCoderのGHCが古い問題のSemigroup周り
 
 GHC 7.10にはSemigroup-Monoid Proposalはおろか、 `Data.Semigroup` が存在しない。
 モノイドを使う分には `Data.Monoid` をimportしておけばよいが、自分でモノイドを定義する場合には、最新のGHCではSemigroupがMonoidのスーパークラスとなっているため、GHC 7.10とGHC 8.6の両方で動作するコードを書くにはCPP拡張に頼る必要がある。
