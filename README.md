@@ -42,6 +42,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * K - Stones
 * L - Deque
 * M - Candies
+* N - Slimes
 
 ## AtCoder Beginner Contest 032
 
