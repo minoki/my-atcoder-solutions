@@ -4,3 +4,10 @@ atcoder.cabal
 abc032-d/dataset*.txt
 tdpc-h/dataset*.txt
 *.prof
+*.hi
+*.o
+*.dump-prep
+*.dump-simpl
+*.s
+*.out
+*.out.dSYM/
