@@ -43,6 +43,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * L - Deque
 * M - Candies
 * N - Slimes
+* O - Matching
 
 ## AtCoder Beginner Contest 032
 
