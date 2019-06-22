@@ -376,3 +376,16 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] D - Enough Array
 * [x] E - Common Subsequence
 * [x] F - Minimum Bounding Box
+
+## AtCoder Beginner Contest 131 (2019-06-22)
+
+<https://atcoder.jp/contests/abc131>
+
+解いた問題：
+
+* [x] A - Security
+* [x] B - Bite Eating
+* [x] C - Anti-Division
+* [x] D - Megalomania
+* [ ] E - Friendships
+* [x] F - Must Be Rectangular!
