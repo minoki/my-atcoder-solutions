@@ -44,6 +44,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * M - Candies
 * N - Slimes
 * O - Matching
+* P - Independent Set
 
 ## AtCoder Beginner Contest 032
 
