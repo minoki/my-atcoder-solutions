@@ -387,5 +387,5 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] B - Bite Eating
 * [x] C - Anti-Division
 * [x] D - Megalomania
-* [ ] E - Friendships
+* [x] E - Friendships
 * [x] F - Must Be Rectangular!
