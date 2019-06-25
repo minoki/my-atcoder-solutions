@@ -310,7 +310,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] C - Switches
 * [x] D - equeue
 * [x] E - Roadwork
-* [ ] F - Frog Jump
+* [x] F - Frog Jump
 
 ## M-SOLUTIONS プロコンオープン (2019-06-01)
 
