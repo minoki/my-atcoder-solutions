@@ -13,6 +13,9 @@ import Data.Array.ST (STUArray)
 import qualified Data.Array.Base
 import qualified Unsafe.Coerce
 
+asSTUArray :: ST s (STUArray s i a) -> ST s (STUArray s i a)
+asSTUArray = id
+
 --- UArray i N
 
 unsafeCoerce_UArray_N_Int :: UArray i N -> UArray i Int64
