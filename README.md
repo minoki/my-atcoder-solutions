@@ -126,7 +126,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] A - Regular Triangle
 * [x] B - Red or Blue
 * [ ] C - Snuke the Wizard
-* [ ] D - Modulo Operations
+* [x] D - Modulo Operations
 * [x] E - Black or White
 * [ ] F - More Realistic Manhattan Distance
 
