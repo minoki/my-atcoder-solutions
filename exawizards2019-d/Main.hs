@@ -2,6 +2,7 @@
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE RankNTypes #-}
 import Control.Monad
 import Data.Char (isSpace)
 import Data.Int (Int64)
@@ -9,26 +10,45 @@ import Data.List
 import qualified Data.Vector.Unboxed as U
 import qualified Data.Vector.Unboxed.Mutable as UM
 import qualified Data.ByteString.Char8 as BS
+import Control.Monad.ST
+import Data.Array.ST
+import Control.Monad.Reader
 --
 import Data.Coerce
 import qualified Data.Vector.Generic
 import qualified Data.Vector.Generic.Mutable
-import Debug.Trace
+import qualified Data.Array.Base
+import qualified Unsafe.Coerce
 
-solve :: Int -> Int -> [Int] -> N -> N
-solve !x 0 [] !c = c * fromIntegral x
--- solve !x 1 [y] c bc = c * (traceShow (c,bc,x) $ fromIntegral (x `rem` y))
-solve !x !n ss !c =
-  let (ss0,ss1) = span (> x) ss
-  in if null ss1
-     then factV U.! n * c * fromIntegral x
-     else let !m = length ss0
-              !q = factV U.! n / factV U.! (n-m)
-          in sum $ do (k, t:ts) <- zip [m..] $ tails ss1
-                      -- k + length ts + 1 == n
-                      -- k : t より大きいやつ
-                      let !p = factV U.! (n-m-1) / factV U.! (n-k-1)
-                      return $ solve (x `rem` t) (n - k - 1) ts (q * p * c)
+type Memo s a = ReaderT (STUArray s (Int,Int) N) (ST s) a
+
+runMemo :: Int -> Int -> (forall s. Memo s a) -> a
+runMemo x n action = runST $ do
+  arr <- newArray ((0,0),(x,n)) invalidN
+  runReaderT action arr
+
+solve :: Int -> Int -> [Int] -> N -> Memo s N
+solve !x 0 [] !c = pure $ c * fromIntegral x
+solve !x !n ss !c = do
+  arr <- ask
+  val <- lift $ readArray arr (x,n)
+  if val == invalidN
+    then do val <- doCalc x n ss
+            lift $ writeArray arr (x,n) val
+            return $ c * val
+    else return $ c * val
+  where
+    doCalc !x !n ss = case span (> x) ss of
+      (ss0,[]) -> pure $ factV U.! n * fromIntegral x
+      (ss0,ss1) -> do
+        let !m = length ss0
+            !q = factV U.! n / factV U.! (n-m)
+        s <- sumM [ solve (x `rem` t) (n - k - 1) ts (factV U.! (n-m-1) / factV U.! (n-k-1))
+                  | (k, t:ts) <- zip [m..] $ tails ss1
+                    -- k + length ts + 1 == n
+                    -- k : t より大きいやつ
+                  ]
+        return (q * s)
 -- n == length ss
 
 main = do
@@ -36,10 +56,13 @@ main = do
   -- n <= 200, x <= 10^5
   ss <- U.toList . mergeSortBy (\x y -> compare y x) . U.unfoldrN n (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
   -- si <= 10^5
-  print $ solve x n ss 1
+  print $ runMemo x n $ solve x n ss 1
 
 factV :: U.Vector N
 factV = U.scanl' (*) 1 (U.enumFromN 1 200)
+
+sumM :: (Monad m, Num a) => [m a] -> m a
+sumM = foldM (\s a -> (s +) <$> a) 0
 
 ---
 
@@ -61,6 +84,9 @@ instance Num N where
   (*) = coerce mulMod
   fromInteger n = N (fromInteger (n `mod` fromIntegral modulo))
   abs = undefined; signum = undefined
+
+invalidN :: N
+invalidN = N (-1)
 
 {-# RULES
 "^9/Int" forall x. x ^ (9 :: Int) = let u = x; v = u * u * u in v * v * v
@@ -146,3 +172,19 @@ instance Data.Vector.Generic.Vector U.Vector N where -- needs MultiParamTypeClas
   elemseq (V_N v) x y = Data.Vector.Generic.elemseq v (coerce x) y
 
 instance U.Unbox N
+
+--- STUArray s i N
+
+unsafeCoerce_STUArray_N_Int :: STUArray s i N -> STUArray s i Int64
+unsafeCoerce_STUArray_N_Int = Unsafe.Coerce.unsafeCoerce
+unsafeCoerce_STUArray_Int_N :: STUArray s i Int64 -> STUArray s i N
+unsafeCoerce_STUArray_Int_N = Unsafe.Coerce.unsafeCoerce
+
+instance Data.Array.Base.MArray (STUArray s) N (ST s) where
+  getBounds arr = Data.Array.Base.getBounds (unsafeCoerce_STUArray_N_Int arr)
+  getNumElements arr = Data.Array.Base.getNumElements (unsafeCoerce_STUArray_N_Int arr)
+  newArray lu e = unsafeCoerce_STUArray_Int_N <$> Data.Array.Base.newArray lu (coerce e)
+  newArray_ lu = unsafeCoerce_STUArray_Int_N <$> Data.Array.Base.newArray_ lu
+  unsafeNewArray_ lu = unsafeCoerce_STUArray_Int_N <$> Data.Array.Base.unsafeNewArray_ lu
+  unsafeRead arr i = coerce <$> Data.Array.Base.unsafeRead (unsafeCoerce_STUArray_N_Int arr) i
+  unsafeWrite arr i e = Data.Array.Base.unsafeWrite (unsafeCoerce_STUArray_N_Int arr) i (coerce e)
