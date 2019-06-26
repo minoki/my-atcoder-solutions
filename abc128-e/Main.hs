@@ -41,10 +41,10 @@ fill !i !j !x !depth vec | i < j = doFill 0 depth i j
 main = do
   [n,q] <- map (read . BS.unpack) . BS.words <$> BS.getLine
   -- 1 <= n <= 2*10^5, 1 <= q <= 2*10^5
-  works <- replicateM n $ do
+  works <- U.replicateM n $ do
     [s,t,x] <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
     return (s,t,x)
-  let works' = sortBy (\(s,t,x) (s',t',x') -> compare x' x <> compare s s' <> compare t t') works
+  let works' = mergeSortBy (\(s,t,x) (s',t',x') -> compare x' x <> compare s s' <> compare t t') works
   ds <- U.replicateM q $ do
     Just (d, _) <- BS.readInt <$> BS.getLine
     return d
@@ -52,7 +52,7 @@ main = do
   let depth = ceiling (logBase 2 (fromIntegral q) :: Double) :: Int
   let result = U.create $ do
         vec <- UM.replicate (2^(depth+1)-1) (10^9+1)
-        forM_ works' $ \(s,t,x) -> do
+        U.forM_ works' $ \(s,t,x) -> do
           let !s' = s - x
               !t' = t - x
               i0 = search ds (\d -> s' <= d) 0 q
@@ -65,3 +65,34 @@ main = do
     if v == 10^9+1
       then putStrLn "-1"
       else print v
+
+---
+
+mergeSortBy :: (U.Unbox a) => (a -> a -> Ordering) -> U.Vector a -> U.Vector a
+mergeSortBy !cmp !vec = doSort vec
+  where
+    doSort vec | U.length vec <= 1 = vec
+               | otherwise = let (xs, ys) = U.splitAt (U.length vec `quot` 2) vec
+                             in merge (doSort xs) (doSort ys)
+    merge xs ys = U.create $ do
+      let !n = U.length xs
+          !m = U.length ys
+      result <- UM.new (n + m)
+      let loop !i !j
+            | i == n = U.copy (UM.drop (i + j) result) (U.drop j ys)
+            | j == m = U.copy (UM.drop (i + j) result) (U.drop i xs)
+            | otherwise = let !x = xs U.! i
+                              !y = ys U.! j
+                          in case cmp x y of
+                               LT -> do UM.write result (i + j) x
+                                        loop (i + 1) j
+                               EQ -> do UM.write result (i + j) x
+                                        UM.write result (i + j + 1) y
+                                        loop (i + 1) (j + 1)
+                               GT -> do UM.write result (i + j) y
+                                        loop i (j + 1)
+      loop 0 0
+      return result
+
+mergeSort :: (U.Unbox a, Ord a) => U.Vector a -> U.Vector a
+mergeSort = mergeSortBy compare
