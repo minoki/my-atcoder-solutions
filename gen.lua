@@ -22,7 +22,7 @@ fh:write([[
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE BangPatterns #-}
 import Data.Char (isSpace)
-import Data.Int
+import Data.Int (Int64)
 import Data.List (unfoldr)
 import Control.Monad
 import qualified Data.Vector.Unboxed as U
