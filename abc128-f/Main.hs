@@ -16,8 +16,9 @@ main = do
   let ts = U.zipWith (+) ss (U.reverse ss)
   print $ maximum $ [ U.maximum $ U.scanl (+) 0 (skipping d $ U.take l ts)
                     | d <- [1..n-2]
-                    , let l | (n - 1) `rem` d == 0 = min (n `quot` 2) (n - 1 - d)
-                            | otherwise = n - 1 - d
+                    , let l = if (n - 1) `rem` d == 0
+                              then min (n `quot` 2) (n - 1 - d)
+                              else n - 1 - d
                     ]
 
 readInt64 :: BS.ByteString -> Maybe (Int64, BS.ByteString)
