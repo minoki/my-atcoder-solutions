@@ -13,8 +13,6 @@ addMod !x !y | x + y >= modulo = x + y - modulo
 subMod !x !y | x >= y = x - y
              | otherwise = x - y + modulo
 mulMod !x !y = (x * y) `rem` modulo
-{-# INLINE addMod #-}
-{-# INLINE subMod #-}
 
 newtype N = N { unwrapN :: Int64 } deriving (Eq)
 instance Show N where
@@ -25,10 +23,13 @@ instance Num N where
   (*) = coerce mulMod
   fromInteger n = N (fromInteger (n `mod` fromIntegral modulo))
   abs = undefined; signum = undefined
-  {-# INLINE (+) #-}
-  {-# INLINE (-) #-}
-  {-# INLINE (*) #-}
-  {-# INLINE fromInteger #-}
+
+{-# RULES
+"^9/Int" forall x. x ^ (9 :: Int) = let u = x; v = u * u * u in v * v * v
+"^9/Integer" forall x. x ^ (9 :: Integer) = let u = x; v = u * u * u in v * v * v
+ #-}
+
+---
 
 exEuclid :: (Eq a, Integral a) => a -> a -> (a, a, a)
 exEuclid !f !g = loop 1 0 0 1 f g
@@ -48,8 +49,3 @@ instance Fractional N where
   (/) = coerce divM
   recip = coerce recipM
   fromRational = undefined
-
-{-# RULES
-"^9/Int" forall x. x ^ (9 :: Int) = let u = x; v = u * u * u in v * v * v
-"^9/Integer" forall x. x ^ (9 :: Integer) = let u = x; v = u * u * u in v * v * v
- #-}
