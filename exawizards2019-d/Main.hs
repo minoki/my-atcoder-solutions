@@ -28,27 +28,26 @@ runMemo x n action = runST $ do
   runReaderT action arr
 
 solve :: Int -> Int -> [Int] -> N -> Memo s N
-solve !x 0 [] !c = pure $ c * fromIntegral x
+solve !x 0 [] !c = pure $! c * fromIntegral x
 solve !x !n ss !c = do
   arr <- ask
   val <- lift $ readArray arr (x,n)
   if val == invalidN
     then do val <- doCalc x n ss
             lift $ writeArray arr (x,n) val
-            return $ c * val
-    else return $ c * val
+            return $! c * val
+    else return $! c * val
   where
-    doCalc !x !n ss = case span (> x) ss of
-      (ss0,[]) -> pure $ factV U.! n * fromIntegral x
-      (ss0,ss1) -> do
-        let !m = length ss0
-            !q = factV U.! n / factV U.! (n-m)
-        s <- sumM [ solve (x `rem` t) (n - k - 1) ts (factV U.! (n-m-1) / factV U.! (n-k-1))
-                  | (k, t:ts) <- zip [m..] $ tails ss1
-                    -- k + length ts + 1 == n
-                    -- k : t より大きいやつ
-                  ]
-        return (q * s)
+    doCalc !x !n ss = case spanN (> x) ss of
+      (_,[]) -> pure $! factV U.! n * fromIntegral x
+      (!m,ss1) -> do
+        let !q = factV U.! n / factV U.! (n-m)
+        !s <- sumM [ solve (x `rem` t) (n-k-1) ts (factV U.! (n-m-1) / factV U.! (n-k-1))
+                   | (k, t:ts) <- zip [m..] $ tails ss1
+                     -- k + length ts + 1 == n
+                     -- k : t より大きいやつ
+                   ]
+        return $! q * s
 -- n == length ss
 
 main = do
@@ -63,6 +62,15 @@ factV = U.scanl' (*) 1 (U.enumFromN 1 200)
 
 sumM :: (Monad m, Num a) => [m a] -> m a
 sumM = foldM (\s a -> (s +) <$> a) 0
+
+-- spanN f xs == first length (span f xs)
+spanN :: (a -> Bool) -> [a] -> (Int, [a])
+spanN f = go 0
+  where
+    go !n [] = (n, [])
+    go !n xs@(x:xss) = if f x
+                       then go (n+1) xss
+                       else (n, xs)
 
 ---
 
