@@ -4,50 +4,72 @@ import Data.Char (isSpace)
 import Data.Int (Int64)
 import Data.List (unfoldr)
 import Data.Bifunctor (first)
+import Control.Monad
+import Control.Monad.ST
 import qualified Data.Vector.Unboxed as U
 import qualified Data.Vector.Unboxed.Mutable as UM
 import qualified Data.ByteString.Char8 as BS
-import qualified Data.IntMap.Strict as IntMap
+import Data.Bits
+
+type SegTree a = (Int, U.Vector a)
+type MSegTree s a = (Int, U.MVector s a)
+
+queryM :: Int -> MSegTree s Int64 -> ST s Int64
+queryM !i (!depth, vec) = UM.read vec (2^depth - 1 + i)
+
+-- queryRangeM i j st == maximum <$> sequence [query k st | k <- [i..j-1]]
+queryRangeM :: Int -> Int -> MSegTree s Int64 -> ST s Int64
+queryRangeM !i !j (!depth, vec) | i < j = doQuery 0 depth i j
+                                | otherwise = return minBound
+  where
+    -- Invariant: 0 <= k*2^l <= i < j <= (k+1)*2^l <= 2^depth
+    doQuery !k 0 !i !j | i == k, j == k+1 = UM.read vec (2^depth - 1 + k)
+                       | otherwise = error "query"
+    doQuery !k l !i !j | i == (k `shiftL` l), j == (k+1) `shiftL` l = UM.read vec (2^(depth-l) - 1 + k)
+                       | m <= i = doQuery (2*k+1) (l-1) i j
+                       | j <= m = doQuery (2*k) (l-1) i j
+                       | otherwise = max <$> doQuery (2*k) (l-1) i m <*> doQuery (2*k+1) (l-1) m j
+      where m = (2*k+1) `shiftL` (l-1)
+
+set :: Int -> MSegTree s Int64 -> Int64 -> ST s ()
+set !i (!depth, vec) !x = forM_ [0..depth] $ \k ->
+  UM.modify vec (max x) (2^k - 1 + (i `shiftR` (depth - k)))
 
 main = do
   n <- readLn
   hs <- U.unfoldrN n (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
   as <- U.unfoldrN n (readInt64 . BS.dropWhile isSpace) <$> BS.getLine
-  let -- v ! i は j < i かつ hs ! j < hs ! i となるような j のうち、 hs ! j が最大のもの
-      -- そのような j が存在しなければ -1
-      v :: U.Vector Int
-      v = U.create $ do
-        vec <- UM.new n
-        let loop !i !m
-              | i == n = return ()
-              | otherwise = do
-                  let hs_i = hs U.! i
-                  case IntMap.lookupLT hs_i m of
-                    Just (hs_j, j) -> do
-                      UM.write vec i j
-                      loop (i+1) (IntMap.insert hs_i i m)
-                    Nothing -> do
-                      UM.write vec i (-1)
-                      loop (i+1) (IntMap.insert hs_i i m)
-        loop 0 IntMap.empty
+  let ht = U.create $ do
+        ht <- UM.new n
+        flip U.imapM_ hs $ \i h -> do
+          UM.write ht (h - 1) i
+        return ht
+  let (h2i,m) = runST $ do
+        h2i <- UM.new n
+        let loop !i !j !k | i == n = return k
+                          | otherwise = do
+                              let j' = ht U.! i
+                                  k' = if j < j' then k else k+1
+                              UM.write h2i i k'
+                              loop (i+1) j' k'
+        k <- loop 0 0 0
+        h2i <- U.unsafeFreeze h2i
+        return (h2i,k+1)
+  let depth = ceiling (logBase 2 (fromIntegral m) :: Double) :: Int
+  let result = U.create $ do
+        vec <- UM.replicate (2^(depth+1)-1) 0
+        let st = (depth, vec)
+        forM_ [0..n-1] $ \i -> do
+          let h = hs U.! i
+              k = h2i U.! (h-1)
+          x <- queryRangeM 0 (k+1) st
+          set k st (x + as U.! i)
+          {-
+          x <- foldM (\x a -> max x <$> a) 0 [ UM.read vec j | j <- [0..k] ]
+          UM.write vec k (x + as U.! i)
+          -}
         return vec
-      -- resultV ! i は、入力の先頭から i+1 本のうち高さが hs ! i 以下のものを選んだ部分列に関する問題の答え
-      resultV :: U.Vector Int64
-      resultV = U.create $ do
-        vec <- UM.new n
-        let loop !i !m
-              | i == n = return ()
-              | otherwise = do
-                  let h = hs U.! i
-                  let a = as U.! i
-                  let (left, right) = IntMap.split h m
-                  let s' = maximum (0 : IntMap.elems left)
-                  let s'' = a + s'
-                  UM.write vec i s''
-                  loop (i+1) $ IntMap.insert h s'' $ IntMap.union left $ IntMap.filter (> s'') right
-        loop 0 IntMap.empty
-        return vec
-  print $ U.maximum $ resultV
+  print $ U.head result
 
 readInt64 :: BS.ByteString -> Maybe (Int64, BS.ByteString)
 readInt64 s = first fromIntegral <$> BS.readInt s

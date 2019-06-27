@@ -45,7 +45,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] N - Slimes
 * [x] O - Matching
 * [x] P - Independent Set
-* [ ] Q - Flowers
+* [x] Q - Flowers
 * [x] R - Walk
 * [ ] S - Digit Sum
 * [ ] T - Permutation
