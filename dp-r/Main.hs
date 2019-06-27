@@ -30,11 +30,11 @@ matMul :: UArray (Int,Int) N -> UArray (Int,Int) N -> UArray (Int,Int) N
 matMul a b = let ((i0,j0),(ix,jx)) = bounds a
                  ((j'0,k0),(j'x,kx)) = bounds b
              in if jx - j0 == j'x - j'0
-                   then array ((i0,k0),(ix,kx))
-                        [ ((i,k), sum [a!(i,j) * b!(j',k) | (j,j') <- zip (range (j0,jx)) (range (j'0,j'x))])
-                        | i <- range (i0,ix)
-                        , k <- range (k0,kx)
-                        ]
+                then array ((i0,k0),(ix,kx))
+                     [ ((i,k), sum [a!(i,j) * b!(j',k) | (j,j') <- zip (range (j0,jx)) (range (j'0,j'x))])
+                     | i <- range (i0,ix)
+                     , k <- range (k0,kx)
+                     ]
                 else error "Matrix size mismatch"
 
 matPow :: Int -> UArray (Int,Int) N -> Int64 -> UArray (Int,Int) N
