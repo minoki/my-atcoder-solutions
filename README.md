@@ -29,22 +29,32 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Frog 1
-* B - Frog 2
-* C - Vacation
-* D - Knapsack 1
-* E - Knapsack 2
-* F - LCS
-* G - Longest Path
-* H - Grid 1
-* I - Coins
-* J - Sushi
-* K - Stones
-* L - Deque
-* M - Candies
-* N - Slimes
-* O - Matching
-* P - Independent Set
+* [x] A - Frog 1
+* [x] B - Frog 2
+* [x] C - Vacation
+* [x] D - Knapsack 1
+* [x] E - Knapsack 2
+* [x] F - LCS
+* [x] G - Longest Path
+* [x] H - Grid 1
+* [x] I - Coins
+* [x] J - Sushi
+* [x] K - Stones
+* [x] L - Deque
+* [x] M - Candies
+* [x] N - Slimes
+* [x] O - Matching
+* [x] P - Independent Set
+* [ ] Q - Flowers
+* [x] R - Walk
+* [ ] S - Digit Sum
+* [ ] T - Permutation
+* [ ] U - Grouping
+* [ ] V - Subtree
+* [ ] W - Intervals
+* [ ] X - Tower
+* [ ] Y - Grid 2
+* [ ] Z - Frog 3
 
 ## AtCoder Beginner Contest 032
 
