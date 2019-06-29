@@ -399,3 +399,16 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] D - Megalomania
 * [x] E - Friendships
 * [x] F - Must Be Rectangular!
+
+## AtCoder Beginner Contest 132 (2019-06-29)
+
+<https://atcoder.jp/contests/abc132>
+
+解いた問題：
+
+* [x] A - Fifty-Fifty
+* [x] B - Ordinary Number
+* [x] C - Divide the Problems
+* [x] D - Blue and Red Balls
+* [ ] E - Hopscotch Addict
+* [ ] F - Small Products
