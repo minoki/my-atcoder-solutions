@@ -410,5 +410,5 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] B - Ordinary Number
 * [x] C - Divide the Problems
 * [x] D - Blue and Red Balls
-* [ ] E - Hopscotch Addict
+* [x] E - Hopscotch Addict
 * [ ] F - Small Products
