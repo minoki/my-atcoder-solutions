@@ -424,4 +424,4 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] C - Remainder Minimization 2019
 * [x] D - Rain Flows into Dams
 * [x] E - Virus Tree 2
-* [ ] F - Colorful Tree
+* [x] F - Colorful Tree
