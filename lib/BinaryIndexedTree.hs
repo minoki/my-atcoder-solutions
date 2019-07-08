@@ -28,6 +28,7 @@ queryM_BIT (BIT vec) !i = doQuery i mempty
     doQuery i !acc = do y <- GM.read vec (i - 1)
                         let !j = (i - 1) .&. i
                         doQuery j (y <> acc)
+{-# INLINE queryM_BIT #-}
 
 -- index: zero-based
 -- property: forall vec i x. do { tree <- fromVector_BIT vec; add_BIT tree i x; return tree } == fromVector_BIT (G.accum (<>) vec [(i,x)])
@@ -38,6 +39,7 @@ add_BIT (BIT vec) !i !y = loop (i + 1)
     loop !k = do x <- GM.read vec (k - 1)
                  GM.write vec (k - 1) $! x <> y
                  loop (k + (k .&. (-k)))
+{-# INLINE add_BIT #-}
 
 new_BIT :: (Monoid a, GM.MVector mvec a, PrimMonad m) => Int -> m (BIT mvec (PrimState m) a)
 new_BIT n = BIT <$> GM.replicate n mempty
