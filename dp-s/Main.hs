@@ -20,12 +20,12 @@ main = do
   d <- readLn
   let v :: V.Vector (U.Vector N)
       v = V.iterateN (BS.length k) (\u -> U.generate d (\i -> sum [u U.! ((i - k) `mod` d) | k <- [0..9]])) (U.generate d (\i -> if i == 0 then 1 else 0))
-      f :: BS.ByteString -> Int -> N
-      f !s !j = case BS.uncons s of
-                  Nothing -> if j == 0 then 1 else 0
+      f :: BS.ByteString -> Int -> N -> N
+      f !s !j !acc = case BS.uncons s of
+                  Nothing -> if j == 0 then acc + 1 else acc
                   Just (c, s') -> let kn = digitToInt c
-                                  in f (BS.tail s) ((j - kn) `mod` d) + sum [(v V.! BS.length s') U.! ((j - l) `mod` d) | l <- [0..kn-1]]
-  print $ f k 0 - 1
+                                  in f (BS.tail s) ((j - kn) `mod` d) (acc + sum [(v V.! BS.length s') U.! ((j - l) `mod` d) | l <- [0..kn-1]])
+  print $ f k 0 0 - 1
 
 --
 -- Modular Arithmetic
