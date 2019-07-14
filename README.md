@@ -425,3 +425,14 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] D - Rain Flows into Dams
 * [x] E - Virus Tree 2
 * [x] F - Colorful Tree
+
+## AtCoder Grand Contest 035 (2019-07-14)
+
+<https://atcoder.jp/contests/agc035>
+
+* [x] A - XOR Circle
+* [x] B - Even Degrees
+* [x] C - Skolem XOR Tree
+* [ ] D - Add and Remove
+* [ ] E - Develop
+* [ ] F - Two Histograms
