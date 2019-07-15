@@ -3,9 +3,13 @@
 {-# LANGUAGE BangPatterns #-}
 import Control.Monad
 import Data.Bits
+import Data.Monoid
+import qualified Data.ByteString.Builder as BSB
+import System.IO
 
 printEdge :: Int -> Int -> IO ()
-printEdge !i !j = putStrLn $ show i ++ " " ++ show j
+-- printEdge !i !j = putStrLn $ show i ++ " " ++ show j
+printEdge !i !j = BSB.hPutBuilder stdout $ BSB.intDec i <> BSB.char7 ' ' <> BSB.intDec j <> BSB.char7 '\n'
 
 main = do
   n :: Int <- readLn
