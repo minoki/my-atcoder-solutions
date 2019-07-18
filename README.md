@@ -48,7 +48,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] Q - Flowers
 * [x] R - Walk
 * [x] S - Digit Sum
-* [ ] T - Permutation
+* [x] T - Permutation
 * [ ] U - Grouping
 * [ ] V - Subtree
 * [ ] W - Intervals
