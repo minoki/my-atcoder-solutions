@@ -1,0 +1,9 @@
+-- https://github.com/minoki/my-atcoder-solutions
+import Data.Char (isSpace)
+import Data.List (unfoldr)
+import qualified Data.ByteString.Char8 as BS
+
+main = do
+  [n,d] <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
+  let m = 2 * d + 1
+  print $ (n + m - 1) `quot` m

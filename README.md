@@ -436,3 +436,14 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [ ] D - Add and Remove
 * [ ] E - Develop
 * [ ] F - Two Histograms
+
+## AtCoder Beginner Contest 134 (2019-07-20)
+
+<https://atcoder.jp/contests/abc134>
+
+* [x] A - Dodecagon
+* [x] B - Golden Apple
+* [x] C - Exception Handling
+* [x] D - Preparing Boxes
+* [x] E - Sequence Decomposing
+* [ ] F - Permutation Oddness
