@@ -447,3 +447,14 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] D - Preparing Boxes
 * [x] E - Sequence Decomposing
 * [ ] F - Permutation Oddness
+
+## AtCoder Grand Contest 036 (2019-07-21)
+
+<https://atcoder.jp/contests/agc036/tasks>
+
+* [x] A - Triangle
+* [x] B - Do Not Duplicate
+* [ ] C - GP 2
+* [ ] D - Negative Cycle
+* [ ] E - ABC String
+* [ ] F - Square Constraints
