@@ -8,7 +8,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 ## AtCoder Beginner Contest
 
-<abc/README.md> を参照。
+[abc/README.md](abc/README.md) を参照。
 
 ## Typical DP Contest
 
