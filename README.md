@@ -213,7 +213,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 * [x] A - Triangle
 * [x] B - Do Not Duplicate
-* [ ] C - GP 2
+* [x] C - GP 2
 * [ ] D - Negative Cycle
 * [ ] E - ABC String
 * [ ] F - Square Constraints
