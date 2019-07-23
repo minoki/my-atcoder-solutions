@@ -54,7 +54,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] S - Digit Sum
 * [x] T - Permutation
 * [x] U - Grouping
-* [ ] V - Subtree
+* [x] V - Subtree
 * [ ] W - Intervals
 * [ ] X - Tower
 * [ ] Y - Grid 2
