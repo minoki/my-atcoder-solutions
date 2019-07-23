@@ -16,15 +16,26 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A コンテスト
-* B ゲーム
-* C トーナメント
-* D サイコロ
-* E 数
-* F 準急
-* G 辞書順
-* H ナップザック
-* T フィボナッチ <https://github.com/minoki/typical-dp-contest-t-fibonacci>
+* [x] A - コンテスト
+* [x] B - ゲーム
+* [x] C - トーナメント
+* [x] D - サイコロ
+* [x] E - 数
+* [x] F - 準急
+* [x] G - 辞書順
+* [x] H - ナップザック
+* [ ] I - イウィ
+* [ ] J - ボール
+* [ ] K - ターゲット
+* [ ] L - 猫
+* [ ] M - 家
+* [ ] N - 木
+* [ ] O - 文字列
+* [ ] P - うなぎ
+* [ ] Q - 連結
+* [ ] R - グラフ
+* [ ] S - マス目
+* [x] T - フィボナッチ <https://github.com/minoki/typical-dp-contest-t-fibonacci>
     * 解説記事：[フィボナッチ数絡みの競プロの問題を解いてみた（Typical DP Contest T）](https://blog.miz-ar.info/2019/02/typical-dp-contest-t/)
 
 ## Educational DP Contest
@@ -105,7 +116,13 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Zero Sum Ranges
+* [x] A - Zero Sum Ranges
+    * 令和記念に解いた（2019年4月1日）
+* [ ] B - Find Symmetries
+* [ ] C - Painting Machines
+* [ ] D - Go Home
+* [ ] E - Inversions
+* [ ] F - 01 on Tree
 
 ## Tenka1 Programmer Contest 2019 (2019-04-20)
 
@@ -124,9 +141,11 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - Bulletin Board
-* B - Contests
-* C - Alternating Path
+* [x] A - Bulletin Board
+* [x] B - Contests
+* [x] C - Alternating Path
+* [ ] D - Nearest Card Game
+* [ ] E - Attack to a Tree
 
 ## Xmas Contest 2018
 
@@ -142,7 +161,10 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 解いた問題：
 
-* A - 素数、コンテスト、素数
+* [x] A - 素数、コンテスト、素数
+* [ ] B - 解像度が低い。
+* [ ] C - 無駄なものが嫌いな人
+* [ ] D - ARCたんクッキー
 
 ## diverta 2019 Programming Contest (2019-05-11)
 
