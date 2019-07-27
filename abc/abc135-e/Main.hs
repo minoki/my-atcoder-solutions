@@ -5,8 +5,11 @@ import Data.List (unfoldr)
 import Control.Monad
 import qualified Data.Vector.Unboxed as U
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Builder as BSB
 import Data.Bifunctor
 import Control.Exception
+import System.IO
+import Data.Monoid
 
 -- d <= 2 * k && x >= 0 && y >= 0 && (even (x + y) || odd k)
 solveSmall :: Int -> Int -> Int -> [(Int,Int)]
@@ -68,7 +71,8 @@ main = do
                    | otherwise = xs
             -- print $ check k ys
             print $ length ys
-            forM_ ys $ \(x',y') -> putStrLn $ unwords [show x', show y']
+            -- forM_ ys $ \(x',y') -> putStrLn $ unwords [show x', show y']
+            BSB.hPutBuilder stdout $ mconcat $ map (\(x',y') -> BSB.intDec x' <> BSB.char7 ' ' <> BSB.intDec y' <> BSB.char7 '\n') ys
 
 check :: Int -> [(Int,Int)] -> Bool
 check !k xs = and $ zipWith (\(x0,y0) (x1,y1) -> abs (x0-x1) + abs (y0-y1) == k) ((0,0) : xs) xs
