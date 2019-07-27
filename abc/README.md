@@ -244,3 +244,14 @@
 * [x] D - Preparing Boxes
 * [x] E - Sequence Decomposing
 * [ ] F - Permutation Oddness
+
+## AtCoder Beginner Contest 135 (2019-07-27)
+
+<https://atcoder.jp/contests/abc135>
+
+* [x] A - Harmony
+* [x] B - 0 or 1 Swap
+* [x] C - City Savers
+* [x] D - Digits Parade
+* [ ] E - Golf
+* [ ] F - Strings of Eternity
