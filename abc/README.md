@@ -253,5 +253,5 @@
 * [x] B - 0 or 1 Swap
 * [x] C - City Savers
 * [x] D - Digits Parade
-* [ ] E - Golf
+* [x] E - Golf
 * [ ] F - Strings of Eternity
