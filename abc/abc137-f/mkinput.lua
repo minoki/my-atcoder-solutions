@@ -1,4 +1,4 @@
-local p = 1051 -- 2999
+local p = arg[1] and tonumber(arg[1]) or 2999
 io.output(string.format("input%d.txt", p))
 io.write(tostring(p), "\n")
 local t = {}

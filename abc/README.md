@@ -276,4 +276,4 @@
 * [x] C - Green Bin
 * [x] D - Summer Vacation
 * [ ] E - Coins Respawn
-* [ ] F - Polynomial Construction
+* [x] F - Polynomial Construction
