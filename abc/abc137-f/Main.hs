@@ -18,29 +18,34 @@ import Data.Coerce
 import Data.Monoid
 import qualified Data.ByteString.Builder as BSB
 import System.IO
----
 import Unsafe.Coerce
 
-solve :: forall p. IsInt64 p => U.Vector Int -> Proxy p -> IO ()
+sumVectors :: (Num a, G.Vector vec a) => Int -> [vec a] -> vec a
+sumVectors len vs = G.create $ do
+  vec <- GM.replicate len 0
+  forM_ vs $ \v -> do
+    G.imapM_ (\i x -> GM.modify vec (+ x) i) v
+  return vec
+
+solve :: forall p. IsInt64 p => U.Vector Int -> Proxy p -> U.Vector (IntMod p)
 solve as proxy = let p :: Int
                      p = fromIntegral (int64Val proxy)
                      -- f = x^p - x
                      f :: Poly U.Vector (IntMod p)
                      f = Poly $ U.generate (p+1) $ \i -> if i == p then 1 else if i == 1 then -1 else 0
-                     result = U.map negate $ U.create $ do
-                       vec <- UM.replicate p 0
-                       U.forM_ (U.indexed as) $ \(i,a) -> do
-                         when (a == 1) $ do
-                           -- let (p, 0) = f `divModPoly` Poly (U.fromList [fromIntegral (-i), 1])
-                           let (p, 0) = f `divModByDeg1` fromIntegral i
-                           U.imapM_ (\i x -> UM.modify vec (+ x) i) (coeffAsc p)
-                       return vec
-                 in BSB.hPutBuilder stdout $ (mconcat $ intersperse (BSB.char7 ' ') $ map (BSB.int64Dec . getIntMod) $ U.toList (result <> U.replicate (p - U.length result) 0)) <> BSB.char7 '\n'
+                 in U.map negate $ sumVectors p [ coeffAsc p
+                                                | (i,a) <- zip [0..] (U.toList as)
+                                                , a == 1
+                                                -- let (p, 0) = f `divModPoly` Poly (U.fromList [fromIntegral (-i), 1])
+                                                , let (p, 0) = f `divModByDeg1` fromIntegral i
+                                                ]
 
 main = do
   p <- readLn -- 2 <= p <= 2999
   xs <- U.unfoldrN p (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
-  reifyInt64 (fromIntegral p) (solve xs)
+  reifyInt64 (fromIntegral p) (\proxy -> let result = solve xs proxy
+                                         in BSB.hPutBuilder stdout $ (mconcat $ intersperse (BSB.char7 ' ') $ map (BSB.int64Dec . getIntMod) $ U.toList (result <> U.replicate (p - U.length result) 0)) <> BSB.char7 '\n'
+                              )
 
 ---
 
