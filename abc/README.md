@@ -277,3 +277,14 @@
 * [x] D - Summer Vacation
 * [ ] E - Coins Respawn
 * [x] F - Polynomial Construction
+
+## AtCoder Beginner Contest 138
+
+<https://atcoder.jp/contests/abc138>
+
+* [x] A - Red or Not
+* [x] B - Resistors in Parallel
+* [x] C - Alchemist
+* [x] D - Ki
+* [ ] E - Strings of Impurity
+* [ ] F - Coincidence
