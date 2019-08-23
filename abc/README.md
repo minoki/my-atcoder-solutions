@@ -275,7 +275,7 @@
 * [x] B - One Clue
 * [x] C - Green Bin
 * [x] D - Summer Vacation
-* [ ] E - Coins Respawn
+* [x] E - Coins Respawn
 * [x] F - Polynomial Construction
 
 ## AtCoder Beginner Contest 138
