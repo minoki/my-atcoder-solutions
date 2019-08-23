@@ -231,7 +231,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 ## AtCoder Grand Contest 036 (2019-07-21)
 
-<https://atcoder.jp/contests/agc036/tasks>
+<https://atcoder.jp/contests/agc036>
 
 * [x] A - Triangle
 * [x] B - Do Not Duplicate
@@ -239,3 +239,14 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [ ] D - Negative Cycle
 * [ ] E - ABC String
 * [ ] F - Square Constraints
+
+## AtCoder Grand Contest 037
+
+<https://atcoder.jp/contests/agc037>
+
+* [x] A - Dividing a String
+* [ ] B - RGB Balls
+* [ ] C - Numbers on a Circle
+* [ ] D - Sorting a Grid
+* [ ] E - Reversing and Concatenating
+* [ ] F - Counting of Subarrays
