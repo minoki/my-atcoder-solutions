@@ -286,5 +286,5 @@
 * [x] B - Resistors in Parallel
 * [x] C - Alchemist
 * [x] D - Ki
-* [ ] E - Strings of Impurity
+* [x] E - Strings of Impurity
 * [ ] F - Coincidence
