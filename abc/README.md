@@ -287,4 +287,4 @@
 * [x] C - Alchemist
 * [x] D - Ki
 * [x] E - Strings of Impurity
-* [ ] F - Coincidence
+* [x] F - Coincidence
