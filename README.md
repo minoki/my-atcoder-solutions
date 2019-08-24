@@ -250,3 +250,14 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [ ] D - Sorting a Grid
 * [ ] E - Reversing and Concatenating
 * [ ] F - Counting of Subarrays
+
+## 第一回日本最強プログラマー学生選手権 -予選- (2019-08-24)
+
+<https://atcoder.jp/contests/jsc2019-qual>
+
+* [x] A - Takahashi Calendar
+* [x] B - Kleene Inversion
+* [x] C - Cell Inversion
+* [x] D - Classified
+* [ ] E - Card Collector
+* [ ] F - Candy Retribution
