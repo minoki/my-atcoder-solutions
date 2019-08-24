@@ -1,26 +1,23 @@
 -- https://github.com/minoki/my-atcoder-solutions
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE BangPatterns #-}
 import Data.Int (Int64)
-import qualified Data.ByteString.Char8 as BS
 import Data.Coerce
+import qualified Data.ByteString.Char8 as BS
+import Control.Exception (assert)
 
 main = do
-  n :: Int <- readLn
+  n <- readLn
   s <- BS.getLine
-  let loop :: Int -> Int -> Int -> N
-      loop !t !k !i | BS.length s == i = if k == 0 then 1 else 0
-                    | BS.index s i == 'W' = if k == 0
-                                            then 0
-                                            else if even k
-                                                 then fromIntegral k * loop t (k-1) (i+1)
-                                                 else fromIntegral (t+1) * loop (t+1) (k+1) (i+1)
-                    | otherwise = if k == 0
-                                  then fromIntegral (t+1) * loop (t+1) 1 (i+1)
-                                  else if even k
-                                       then fromIntegral (t+1) * loop (t+1) (k+1) (i+1)
-                                       else fromIntegral k * loop t (k-1) (i+1)
-  print $ loop 0 0 0
+  assert (BS.length s == 2 * n) $ return ()
+  let loop :: N -> Int -> Int -> N
+      loop !acc !k !i | BS.length s == i = if k == 0 then acc else 0
+                      | BS.index s i == 'W' = if even k
+                                              then loop (acc * fromIntegral k) (k-1) (i+1)
+                                              else loop acc (k+1) (i+1)
+                      | otherwise = if even k
+                                    then loop acc (k+1) (i+1)
+                                    else loop (acc * fromIntegral k) (k-1) (i+1)
+  print $ loop (product $ map fromIntegral [1..n]) 0 0
 
 --
 -- Modular Arithmetic
