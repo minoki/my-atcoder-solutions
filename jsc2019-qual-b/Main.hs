@@ -67,6 +67,15 @@ instance Num N where
 "^9/Integer" forall x. x ^ (9 :: Integer) = let u = x; v = u * u * u in v * v * v
  #-}
 
+fromIntegral_Int64_N :: Int64 -> N
+fromIntegral_Int64_N n | 0 <= n && n < modulo = N n
+                       | otherwise = N (n `mod` modulo)
+
+{-# RULES
+"fromIntegral/Int->N" fromIntegral = fromIntegral_Int64_N . fromIntegral
+"fromIntegral/Int64->N" fromIntegral = fromIntegral_Int64_N
+ #-}
+
 ---
 
 exEuclid :: (Eq a, Integral a) => a -> a -> (a, a, a)

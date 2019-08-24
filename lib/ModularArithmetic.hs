@@ -5,6 +5,10 @@ module ModularArithmetic where
 import Data.Int
 import Data.Coerce
 
+--
+-- Modular Arithmetic
+--
+
 modulo :: Int64
 modulo = 10^9+7
 addMod, subMod, mulMod :: Int64 -> Int64 -> Int64
@@ -27,6 +31,15 @@ instance Num N where
 {-# RULES
 "^9/Int" forall x. x ^ (9 :: Int) = let u = x; v = u * u * u in v * v * v
 "^9/Integer" forall x. x ^ (9 :: Integer) = let u = x; v = u * u * u in v * v * v
+ #-}
+
+fromIntegral_Int64_N :: Int64 -> N
+fromIntegral_Int64_N n | 0 <= n && n < modulo = N n
+                       | otherwise = N (n `mod` modulo)
+
+{-# RULES
+"fromIntegral/Int->N" fromIntegral = fromIntegral_Int64_N . fromIntegral
+"fromIntegral/Int64->N" fromIntegral = fromIntegral_Int64_N
  #-}
 
 ---
