@@ -290,3 +290,14 @@
 * [x] D - Ki
 * [x] E - Strings of Impurity
 * [x] F - Coincidence
+
+## AtCoder Beginner Contest 139 (2019-09-01)
+
+<https://atcoder.jp/contests/abc139>
+
+* [x] A - Tenki
+* [x] B - Power Socket
+* [x] C - Lower
+* [x] D - ModSum
+* [x] E - League
+* [x] F - Engines
