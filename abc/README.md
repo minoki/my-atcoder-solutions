@@ -300,4 +300,5 @@
 * [x] C - Lower
 * [x] D - ModSum
 * [x] E - League
+    * 有向グラフの閉路判定と、DAGの最長路
 * [x] F - Engines
