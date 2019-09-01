@@ -18,13 +18,17 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 
 * [x] A - コンテスト
 * [x] B - ゲーム
+    * ゲーム
 * [x] C - トーナメント
 * [x] D - サイコロ
 * [x] E - 数
+    * 桁DP
 * [x] F - 準急
 * [x] G - 辞書順
 * [x] H - ナップザック
+    * 重さの他に色の制約がある
 * [x] I - イウィ
+    * 貪欲法で解けてしまった（`iiwi` や `iwii` という形に遭遇したらその `iwi` は取り除いて良い）
 * [ ] J - ボール
 * [ ] K - ターゲット
 * [ ] L - 猫
@@ -37,6 +41,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [ ] S - マス目
 * [x] T - フィボナッチ <https://github.com/minoki/typical-dp-contest-t-fibonacci>
     * 解説記事：[フィボナッチ数絡みの競プロの問題を解いてみた（Typical DP Contest T）](https://blog.miz-ar.info/2019/02/typical-dp-contest-t/)
+    * 行列の固有多項式が既知なので多項式除算を使って高速に行列累乗ができる
 
 ## Educational DP Contest
 
@@ -48,24 +53,40 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] B - Frog 2
 * [x] C - Vacation
 * [x] D - Knapsack 1
+    * 01ナップサック問題。重さは比較的小さく（〜10<sup>5</sup>）、価値は大きい（〜10<sup>9</sup>）
 * [x] E - Knapsack 2
+    * 01ナップサック問題。重さは大きく（〜10<sup>9</sup>）、価値は小さい（〜10<sup>3</sup>）
 * [x] F - LCS
+    * Longest Common Subsequence
 * [x] G - Longest Path
+    * 有向閉路を含まない有向グラフ
 * [x] H - Grid 1
+    * 2次元DP
 * [x] I - Coins
+    * 確率
 * [x] J - Sushi
+    * 期待値
 * [x] K - Stones
+    * ゲーム
 * [x] L - Deque
+    * ゲーム
 * [x] M - Candies
+    * 飴の分配方法
 * [x] N - Slimes
 * [x] O - Matching
 * [x] P - Independent Set
 * [x] Q - Flowers
+    * Binary Indexed TreeかSegment Treeを使う
 * [x] R - Walk
+    * 頂点数が少ない（〜50）ので行列累乗
 * [x] S - Digit Sum
+    * 桁DP
 * [x] T - Permutation
+    * 桁DPの類似？
 * [x] U - Grouping
+    * ビットDP
 * [x] V - Subtree
+    * 全方位木DP
 * [ ] W - Intervals
 * [ ] X - Tower
 * [ ] Y - Grid 2
@@ -133,6 +154,8 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] C - Stones
 * [ ] D - Three Colors
 * [x] E - Polynomial Divisors
+    * 素数と多項式
+    * 有限体 F<sub>p</sub> 上で関数として恒等的に0になるような多項式は x<sup>p</sup>-x で割り切れる
 * [ ] F - Banned X
 
 ## エイシングプログラミングコンテスト2019
@@ -190,6 +213,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [ ] C - Best-of-(2n-1)
 * [ ] D - Maximum Sum of Minimum
 * [x] E - Product of Arithmetic Progression
+    * mod N での逆元や階乗の計算に帰着させる。
 * [ ] F - Random Tournament
 
 ## AtCoder Grand Contest 034 (2019-06-02)

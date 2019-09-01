@@ -277,6 +277,8 @@
 * [x] D - Summer Vacation
 * [x] E - Coins Respawn
 * [x] F - Polynomial Construction
+    * 有限体上の多項式を構築する
+    * 多項式補間っぽいが……？
 
 ## AtCoder Beginner Contest 138
 
