@@ -6,7 +6,8 @@
 
 解いた問題：
 
-* D ナップサック問題
+* D - ナップサック問題
+    * 0/1ナップサック問題。Nが小さいデータセット、重さが比較的小さいデータセット、価値が比較的小さいデータセットの3種類がある。
 
 ## AtCoder Beginner Contest 122 (2019-03-24)
 
@@ -302,3 +303,14 @@
 * [x] E - League
     * 有向グラフの閉路判定と、DAGの最長路
 * [x] F - Engines
+
+## AtCoder Beginner Contest 140 (2019-09-07)
+
+<https://atcoder.jp/contests/abc140>
+
+* [x] A - Password
+* [x] B - Buffet
+* [x] C - Maximal Value
+* [x] D - Face Produces Unhappiness
+* [ ] E - Second Sum
+* [x] F - Many Slimes
