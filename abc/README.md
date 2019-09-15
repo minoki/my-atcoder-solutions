@@ -314,3 +314,14 @@
 * [x] D - Face Produces Unhappiness
 * [ ] E - Second Sum
 * [x] F - Many Slimes
+
+## AtCoder Beginner Contest 141 (2019-09-15)
+
+<https://atcoder.jp/contests/abc141>
+
+* [x] A - Weather Prediction
+* [x] B - Tap Dance
+* [x] C - Attack Survival
+* [x] D - Powerful Discount Tickets
+* [x] E - Who Says a Pun?
+* [ ] F - Xor Sum 3
