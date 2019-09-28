@@ -325,3 +325,14 @@
 * [x] D - Powerful Discount Tickets
 * [x] E - Who Says a Pun?
 * [ ] F - Xor Sum 3
+
+## AtCoder Beginner Contest 142 (2019-09-28)
+
+<https://atcoder.jp/contests/abc142>
+
+* [x] A - Odds of Oddness
+* [x] B - Roller Coaster
+* [x] C - Go to School
+* [x] D - Disjoint Set of Common Divisors
+* [x] E - Get Everything
+* [x] F - Pure
