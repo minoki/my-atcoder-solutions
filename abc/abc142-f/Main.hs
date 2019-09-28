@@ -1,7 +1,6 @@
 -- https://github.com/minoki/my-atcoder-solutions
 {-# LANGUAGE BangPatterns #-}
 import Data.Char (isSpace)
-import Data.Int (Int64)
 import Data.List (unfoldr)
 import Control.Monad
 import Control.Monad.ST
@@ -12,26 +11,10 @@ import qualified Data.Vector.Unboxed as U
 import qualified Data.Vector.Unboxed.Mutable as UM
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.IntSet as IntSet
-import Data.Monoid
-import Data.Foldable
-import Debug.Trace
 
-checkCycle :: Monad m => V.Vector IntSet.IntSet -> V.Vector IntSet.IntSet -> [Int] -> ExceptT [Int] m ()
-checkCycle edges_from edges_to revPath = do
-  let m = IntSet.fromList revPath
-  let checkEdge i j | IntSet.size ((edges_from V.! i) `IntSet.intersection` m) > 1 = False
-                    | IntSet.size ((edges_to V.! j) `IntSet.intersection` m) > 1 = False
-                    | otherwise = True
-  let ok1 = and (zipWith checkEdge (tail revPath) revPath)
-  if ok1
-    then let path = reverse revPath
-         in if checkEdge (head path) (head revPath)
-            then throwError path
-            else return ()
-    else return ()
-
-findCycle :: V.Vector IntSet.IntSet -> V.Vector IntSet.IntSet -> Either [Int] ()
-findCycle edges edges_to = runST $ runExceptT $ do
+-- 閉路を見つける
+findCycle :: V.Vector IntSet.IntSet -> Either [Int] ()
+findCycle edges = runST $ runExceptT $ do
   let !n = V.length edges  -- 頂点の個数
   seen <- UM.replicate n (0 :: Int) -- 0: new, 1: DFSの最中, 2: チェック済み
   let dfs !x path = do
@@ -49,20 +32,20 @@ findCycle edges edges_to = runST $ runExceptT $ do
     when (s == 0) $ dfs x [x]
   return ()
 
-reduceCycle ::  V.Vector IntSet.IntSet -> V.Vector IntSet.IntSet -> [Int] -> [Int]
-reduceCycle edges_from edges_to path = do
-  let loop :: IntSet.IntSet -> [Int] -> IntSet.IntSet -> [Int] -> [Int]
-      loop m (i:ys@(j:_)) seen revAcc = do
-        let s1 = IntSet.delete j ((edges_from V.! i) `IntSet.intersection` m)
-        case IntSet.maxView s1 of
-          Nothing -> loop m ys (IntSet.insert i seen) (i : revAcc)
-          Just (j',_) | j' `IntSet.member` seen -> loopX (j' : reverse (j' : i : takeWhile (/= j') revAcc))
-                      | otherwise -> case dropWhile (/= j') ys of
-                                       [] -> error $ show (i,j',ys,seen,revAcc)
-                                       ys' -> loop m ys' (IntSet.insert i seen) (i : revAcc)
-      loop m [i] seen revAcc = reverse revAcc
-      loopX path = loop (IntSet.fromList path) path IntSet.empty []
-  loopX path
+reduceCycle ::  V.Vector IntSet.IntSet -> [Int] -> [Int]
+reduceCycle edges_from = reduce1
+  where
+    -- 閉路の一部をショートカットする経路があったらそっちに繋ぎかえる、という操作を繰り返す
+    loop :: IntSet.IntSet -> IntSet.IntSet -> [Int] -> [Int] -> [Int]
+    loop m seen revAcc (i:ys@(j:_)) =
+      case IntSet.maxView $ IntSet.delete j $ edges_from V.! i `IntSet.intersection` m of
+        Nothing -> loop m (IntSet.insert i seen) (i : revAcc) ys
+        Just (j',_) | j' `IntSet.member` seen -> reduce1 (j' : reverse (j' : i : takeWhile (/= j') revAcc))
+                    | otherwise -> loop m (IntSet.insert i seen) (i : revAcc) (dropWhile (/= j') ys)
+    loop m seen revAcc [i] = reverse revAcc -- ショートカットできる経路はもうない
+    loop _ _ _ [] = error "something is wrong"
+    reduce1 :: [Int] -> [Int]
+    reduce1 path = loop (IntSet.fromList path) IntSet.empty [] path
 
 main = do
   [n,m] <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
@@ -75,32 +58,10 @@ main = do
         U.forM_ edges $ \(a,b) ->
           VM.modify vec (IntSet.insert b) a
         return vec
-  let edges_to :: V.Vector IntSet.IntSet
-      edges_to = V.create $ do
-        vec <- VM.replicate n IntSet.empty
-        U.forM_ edges $ \(a,b) ->
-          VM.modify vec (IntSet.insert a) b
-        return vec
-  case findCycle edges_from edges_to of
+  case findCycle edges_from of
     Right _ -> putStrLn "-1"
     Left path -> do
-      let path' = reduceCycle edges_from edges_to path
+      let path' = reduceCycle edges_from path
       print $ length path'
       forM_ path' $ \i -> do
         print (i+1)
-
-foldMap_IntSet :: (Monoid n) => (Int -> n) -> IntSet.IntSet -> n
-foldMap_IntSet f set = go set
-  where
-    go set = case IntSet.splitRoot set of
-               [] -> mempty
-               [x] -> foldMap f (IntSet.toList x)
-               xs -> foldMap go xs
-
-foldMapM_IntSet :: (Monoid n, Monad m) => (Int -> m n) -> IntSet.IntSet -> m n
-foldMapM_IntSet f set = go set
-  where
-    go set = case IntSet.splitRoot set of
-               [] -> return mempty
-               [x] -> foldlM (\x v -> mappend x <$> f v) mempty (IntSet.toList x)
-               xs -> foldlM (\x set' -> mappend x <$> go set') mempty xs
