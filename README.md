@@ -285,3 +285,26 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] D - Classified
 * [ ] E - Card Collector
 * [ ] F - Candy Retribution
+
+## AtCoder Grand Contest 038
+
+<https://atcoder.jp/contests/agc038>
+
+* [ ] A - 01 Matrix
+* [ ] B - Sorting a Segment
+* [ ] C - LCMs
+* [ ] D - Unique Path
+* [ ] E - Gachapon
+* [ ] F - Two Permutations
+
+## AtCoder Grand Contest 039 (2019-10-05)
+
+<https://atcoder.jp/contests/agc039>
+
+* [x] A - Connection and Disconnection
+* [x] B - Graph Partition
+    * 2部グラフの判定と、無向グラフの直径
+* [ ] C - Division by Two with Something
+* [ ] D - Incenters
+* [ ] E - Pairing Points
+* [ ] F - Min Product Sum
