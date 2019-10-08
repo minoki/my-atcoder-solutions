@@ -2,6 +2,7 @@
 {-# LANGUAGE BangPatterns #-}
 import Data.Char (digitToInt, intToDigit)
 import Data.Int (Int64)
+import Data.List (tails)
 import Data.Bits
 import Data.Coerce
 import Data.Foldable
@@ -13,6 +14,7 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.IntSet as IntSet
 import qualified Data.IntMap.Lazy as IntMap
 import Numeric
+import System.Environment
 
 oneAction :: Int -> Int -> Int
 oneAction !n x | even x = bit (n-1) + (x `shiftR` 1)
@@ -45,37 +47,37 @@ flipS :: BS.ByteString -> BS.ByteString
 flipS = BS.map (\c -> if c == '0' then '1' else '0')
 
 solve :: Int -> BS.ByteString -> N
-solve !n !x = sum [ 2 * fromIntegral (n `quot` m * p) * a | (p,a) <- IntMap.toList d ]
+solve !n !x = sum [ 2 * fromIntegral (n `quot` m) * fromIntegral p * a | (p,a) <- IntMap.toList d ]
   where
     countOne :: Int -> N
-    countOne p = let q = n `quot` p
-                     x0 = BS.take q x
-                     y = BS.concat $ x0 : concat (replicate (p `quot` 2) [flipS x0, x0])
-                 in readBinBS (BS.take q x) + (if y <= x then 1 else 0)
-    factors :: [(Int, Int)]
-    factors = filter (\(p,_) -> odd p) $ factor n
+    countOne p | odd p = let q = n `quot` p
+                             x0 = BS.take q x
+                             y = BS.concat $ x0 : concat (replicate (p `quot` 2) [flipS x0, x0])
+                         in readBinBS (BS.take q x) + (if y <= x then 1 else 0)
+               | otherwise = error "countOne: argument must be odd"
+
+    oddFactors :: [(Int, Int)]
+    oddFactors = filter (\(p,_) -> odd p) $ factor n
+    m = product [ p^l | (p,l) <- oddFactors ]
+    divisorLattice = buildDivisorLattice m
     cc :: IntMap.IntMap N
-    cc = foldl' go (IntMap.singleton 1 (countOne 1)) factors
-      where
-        go t (!p,!k) = t `IntMap.union`
-                       IntMap.fromList [ (a*p^i, countOne (a*p^i)) | (a,b) <- IntMap.toList t, i <- [1..k] ]
-    m = product [ p^l | (p,l) <- factors ]
-    mm = cc IntMap.! m
+    cc = IntMap.mapWithKey (\a _ -> countOne $ m `div` a) divisorLattice
     d :: IntMap.IntMap N
-    d = foldl' go (IntMap.singleton 1 mm) factors
-      where
-        go t (!p,!k) = t `IntMap.union`
-                       IntMap.fromList [ (a*p^i, value)
-                                       | (a,b) <- IntMap.toList t, i <- [1..k]
-                                       , let value | a /= 1    = cc IntMap.! (m `div` (a*p^i)) - cc IntMap.! (m `div` a) - cc IntMap.! (m `div` (p^i)) + mm
-                                                   | otherwise = cc IntMap.! (m `div` (a*p^i)) - cc IntMap.! (m `div` (p^(i-1)))
-                                       ]
+    d = IntMap.mapWithKey (\a v -> let dv = IntSet.toList v
+                                   in cc IntMap.! a
+                                      - sum [ cc IntMap.! d | d <- dv ]
+                                      + sum [ cc IntMap.! gcd d1 d2 | d1:dv' <- tails dv, d2 <- dv' ]
+                          ) divisorLattice
 
 main = do
-  n <- readLn :: IO Int
-  x <- BS.getLine
-  print $ solve n x
-  -- print $ naiveS n x
+  args <- getArgs
+  case args of
+    [a] | [(n,"")] <- reads a -> print $ checkBatch n
+    _ -> do
+      n <- readLn :: IO Int
+      x <- BS.getLine
+      print $ solve n x
+      -- print $ naiveS n x
 
 showBin :: (Integral a, Show a) => a -> ShowS
 showBin = showIntAtBase 2 intToDigit
@@ -100,14 +102,14 @@ checkBatch n = let s = U.tail $ U.scanl' (+) 0 $ naiveCount n
 -- Modular Arithmetic
 --
 
-modulo :: Int64
-modulo = 998244353
+modulus :: Int64
+modulus = 998244353
 addMod, subMod, mulMod :: Int64 -> Int64 -> Int64
-addMod !x !y | x + y >= modulo = x + y - modulo
+addMod !x !y | x + y >= modulus = x + y - modulus
              | otherwise = x + y
 subMod !x !y | x >= y = x - y
-             | otherwise = x - y + modulo
-mulMod !x !y = (x * y) `rem` modulo
+             | otherwise = x - y + modulus
+mulMod !x !y = (x * y) `rem` modulus
 
 newtype N = N { unwrapN :: Int64 } deriving (Eq)
 instance Show N where
@@ -116,7 +118,7 @@ instance Num N where
   (+) = coerce addMod
   (-) = coerce subMod
   (*) = coerce mulMod
-  fromInteger n = N (fromInteger (n `mod` fromIntegral modulo))
+  fromInteger n = N (fromInteger (n `mod` fromIntegral modulus))
   abs = undefined; signum = undefined
 
 {-# RULES
@@ -125,8 +127,8 @@ instance Num N where
  #-}
 
 fromIntegral_Int64_N :: Int64 -> N
-fromIntegral_Int64_N n | 0 <= n && n < modulo = N n
-                       | otherwise = N (n `mod` modulo)
+fromIntegral_Int64_N n | 0 <= n && n < modulus = N n
+                       | otherwise = N (n `mod` modulus)
 
 {-# RULES
 "fromIntegral/Int->N" fromIntegral = fromIntegral_Int64_N . (fromIntegral :: Int -> Int64)
@@ -190,3 +192,13 @@ factor x = loop x primes
     loop x [] = [(x,1)]
     factorOut !n !x !p | (q,0) <- x `quotRem` p = factorOut (n+1) q p
                        | otherwise = (n, x)
+
+-- |
+-- >>> buildDivisorLattice 30
+-- fromList [(1,fromList []),(2,fromList [1]),(3,fromList [1]),(5,fromList [1]),(6,fromList [2,3]),(10,fromList [2,5]),(15,fromList [3,5]),(30,fromList [6,10,15])]
+buildDivisorLattice :: Int -> IntMap.IntMap IntSet.IntSet
+buildDivisorLattice x
+  = let xs = factor x
+    in IntMap.fromList $ do f <- filter (\(_,i) -> i > 0) <$> mapM (\(p,k) -> [(p,i) | i <- [0..k]]) xs
+                            let !a = product [p^i | (p,i) <- f]
+                            return (a, IntSet.fromList [ a `div` p | (p,_) <- f ])
