@@ -336,3 +336,14 @@
 * [x] D - Disjoint Set of Common Divisors
 * [x] E - Get Everything
 * [x] F - Pure
+
+## AtCoder Beginner Contest 143
+
+<https://atcoder.jp/contests/abc143>
+
+* [x] A - Curtain
+* [x] B - TAKOYAKI FESTIVAL 2019
+* [x] C - Slimes
+* [x] D - Triangles
+* [x] E - Travel by Car
+* [ ] F - Distinct Numbers
