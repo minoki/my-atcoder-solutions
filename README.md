@@ -308,3 +308,14 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [ ] D - Incenters
 * [ ] E - Pairing Points
 * [ ] F - Min Product Sum
+
+## AtCoder Grand Contest 040 (2019-11-04)
+
+<https://atcoder.jp/contests/agc040>
+
+* [x] A - \>\<
+* [ ] B - Two Contests
+* [ ] C - Neither AB nor BA
+* [ ] D - Balance Beam
+* [ ] E - Prefix Suffix Addition
+* [ ] F - Two Pieces
