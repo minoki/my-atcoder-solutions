@@ -347,3 +347,14 @@
 * [x] D - Triangles
 * [x] E - Travel by Car
 * [ ] F - Distinct Numbers
+
+## AtCoder Beginner Contest 144 (2019-10-27)
+
+<https://atcoder.jp/contests/abc144>
+
+* [x] A - 9x9
+* [x] B - 81
+* [x] C - Walk on Multiplication Table
+* [x] D - Water Bottle
+* [ ] E - Gluttony
+* [ ] F - Fork in the Road
