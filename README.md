@@ -319,3 +319,14 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [ ] D - Balance Beam
 * [ ] E - Prefix Suffix Addition
 * [ ] F - Two Pieces
+
+## 第二回全国統一プログラミング王決定戦予選 (2019-11-09)
+
+<https://atcoder.jp/contests/nikkei2019-2-qual>
+
+* [x] A - Sum of Two Integers
+* [x] B - Counting of Trees
+* [ ] C - Swaps
+* [x] D - Shortest Path on a Line
+* [ ] E - Non-triangular Triplets
+* [ ] F - Mirror Frame
