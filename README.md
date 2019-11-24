@@ -330,3 +330,14 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] D - Shortest Path on a Line
 * [ ] E - Non-triangular Triplets
 * [ ] F - Mirror Frame
+
+## DISCO presents ディスカバリーチャンネル コードコンテスト2020 予選 (2019-11-23)
+
+<https://atcoder.jp/contests/ddcc2020-qual>
+
+* [x] A - DDCC Finals
+* [x] B - Iron Bar Cutting
+* [x] C - Strawberry Cakes
+* [x] D - Digit Sum Replace
+* [ ] E - Majority of Balls
+* [ ] F - DISCOSMOS
