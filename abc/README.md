@@ -358,3 +358,16 @@
 * [x] D - Water Bottle
 * [ ] E - Gluttony
 * [ ] F - Fork in the Road
+
+## AtCoder Beginner Contest 145
+
+## AtCoder Beginner Contest 146 (2019-11-24)
+
+<https://atcoder.jp/contests/abc146>
+
+* [x] A - Can't Wait for Holiday
+* [x] B - ROT N
+* [x] C - Buy an Integer
+* [x] D - Coloring Edges on Tree
+* [ ] E - Rem of Sum is Num
+* [ ] F - Sugoroku
