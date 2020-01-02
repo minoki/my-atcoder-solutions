@@ -371,3 +371,14 @@
 * [x] D - Coloring Edges on Tree
 * [ ] E - Rem of Sum is Num
 * [ ] F - Sugoroku
+
+## AtCoder Beginner Contest 149
+
+<https://atcoder.jp/contests/abc149>
+
+* [ ] A - Strings
+* [ ] B - Greedy Takahashi
+* [x] C - Next Prime
+* [ ] D - Prediction and Restriction
+* [ ] E - Handshake
+* [ ] F - Surrounded Notes
