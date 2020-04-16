@@ -341,3 +341,12 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] D - Digit Sum Replace
 * [ ] E - Majority of Balls
 * [ ] F - DISCOSMOS
+
+## Judge System Update Test Contest 202004
+
+<https://atcoder.jp/contests/judge-update-202004>
+
+* [x] A - Walking Takahashi
+* [x] B - Picking Balls
+* [x] C - Numbering Blocks
+* [x] D - Calculating GCD
