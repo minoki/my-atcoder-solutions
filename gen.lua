@@ -19,7 +19,7 @@ end
 fh = assert(io.open(filename, "w"))
 fh:write([[
 -- https://github.com/minoki/my-atcoder-solutions
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE BangPatterns #-}
 import Data.Char (isSpace)
 import Data.Int (Int64)
@@ -30,7 +30,7 @@ import qualified Data.Vector.Unboxed.Mutable as UM
 import qualified Data.ByteString.Char8 as BS
 
 main = do
-  _ :: [Int] <- map (read . BS.unpack) . BS.words <$> BS.getLine
+  _ <- map (read @Int . BS.unpack) . BS.words <$> BS.getLine
   [n,m] <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
   edges <- U.replicateM m $ do
     [x,y,z] <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
