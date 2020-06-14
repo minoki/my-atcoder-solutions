@@ -394,6 +394,18 @@
 * [x] E - Sum of gcd of Tuples (Hard)
 * [x] F - Select Half
 
+## AtCoder Beginner Contest 169
+
+<https://atcoder.jp/contests/abc169>
+
+* [x] A - Multiplication 1
+* [x] B - Multiplication 2
+* [x] C - Multiplication 3
+    * 解説記事：[浮動小数点数オタクが AtCoder Beginner Contest 169 のC問題をガチで解説してみる](https://qiita.com/mod_poppo/items/910b5fb9303baf864bf7)
+* [ ] D - Div Game
+* [ ] E - Count Median
+* [ ] F - Knapsack for All Subsets
+
 ## AtCoder Beginner Contest 170
 
 <https://atcoder.jp/contests/abc170>
