@@ -32,22 +32,24 @@ isPairwiseCoprime !mbound !xs = maybe False (const True) $ runST $ runMaybeT $ d
   forM_ [2..mbound] $ \i -> do
     t <- UM.read sieve i
     when t $ do
-      let loop !j !u | j > mbound = if u >= 2 then
-                                      mzero
-                                    else
-                                      return ()
-                     | otherwise = do
-                         UM.write sieve j False
-                         let !v = u + m U.! j
-                         if v >= 2 then
-                           mzero -- break
-                         else
-                           loop (j + i) v
+      let loop !j !u
+            | u >= 2 = mzero -- break
+            | j > mbound = return ()
+            | otherwise = do
+                UM.write sieve j False
+                loop (j + i) (u + m U.! j)
       loop (2 * i) (m U.! i)
-  return () -- The answer is "Yes" -- pairwise coprime
+  return () -- The answer is "Yes" (pairwise coprime)
+
+isSetwiseCoprime_naive :: U.Vector Int -> Bool
+isSetwiseCoprime_naive xs = U.foldl' gcd 0 xs == 1
 
 isSetwiseCoprime :: U.Vector Int -> Bool
-isSetwiseCoprime xs = U.foldl' gcd 0 xs == 1 -- not best
+isSetwiseCoprime !xs = loop 0 0 == 1
+  where
+    loop !acc !i | i >= U.length xs = acc
+                 | acc == 1 = acc
+                 | otherwise = loop (gcd acc (xs U.! i)) (i + 1)
 
 main = do
   n <- readLn @Int
@@ -60,10 +62,18 @@ main = do
   else
     putStrLn "not coprime"
 
-prop :: QC.NonEmptyList (QC.Positive Int) -> QC.Property
-prop xs' = let xs = U.fromList (coerce xs') :: U.Vector Int
-               mbound = U.maximum xs
-           in isPairwiseCoprime mbound xs QC.=== isPairwiseCoprime_naive mbound xs
+prop_isPairwiseCoprime :: QC.NonEmptyList (QC.Positive Int) -> QC.Property
+prop_isPairwiseCoprime xs' =
+  let xs = U.fromList (coerce xs') :: U.Vector Int
+      mbound = U.maximum xs
+  in isPairwiseCoprime mbound xs QC.=== isPairwiseCoprime_naive mbound xs
 
-runTest :: IO ()
-runTest = QC.quickCheck $ QC.withMaxSuccess 1000 $ QC.mapSize (* 1000) prop
+prop_isSetwiseCoprime :: QC.NonEmptyList (QC.Positive Int) -> QC.Property
+prop_isSetwiseCoprime xs' =
+  let xs = U.fromList (coerce xs') :: U.Vector Int
+  in isSetwiseCoprime xs QC.=== isSetwiseCoprime_naive xs
+
+runTests :: IO ()
+runTests = do
+  QC.quickCheck $ QC.withMaxSuccess 500 $ QC.mapSize (* 1000) prop_isPairwiseCoprime
+  QC.quickCheck $ QC.withMaxSuccess 500 $ QC.mapSize (* 1000) prop_isSetwiseCoprime
