@@ -5,6 +5,10 @@ import Control.Monad (forM_,when)
 import qualified Data.Vector.Unboxed as U
 import qualified Data.Vector.Unboxed.Mutable as UM
 
+--
+-- Sieve of Eratosthenes
+--
+
 infixr 5 !:
 (!:) :: a -> [a] -> [a]
 (!x) !: xs = x : xs
@@ -70,3 +74,13 @@ factor x = loop x primes
 -- 48
 euler :: Int64 -> Int64
 euler !x = product [(p - 1) * p^(n-1) | (p,n) <- factor x]
+
+{-
+-- |
+-- >>> positiveDivisors 24
+-- fromList [(1,fromList [1]),(2,fromList [1,2]),(3,fromList [1,3]),(4,fromList [1,2,4]),(6,fromList [1,2,3,6]),(8,fromList [1,2,4,8]),(12,fromList [1,2,3,4,6,12]),(24,fromList [1,2,3,4,6,8,12,24])]
+positiveDivisors :: Int -> IntMap.IntMap IntSet.IntSet
+positiveDivisors n = foldl' go (IntMap.singleton 1 (IntSet.singleton 1)) $ factor n
+  where go !m (!p,!k) = iterate go2 m !! k
+          where go2 !m = m `IntMap.union` IntMap.fromAscList [(a*p, b `IntSet.union` IntSet.map (*p) b) | (a,b) <- IntMap.assocs m]
+-}

@@ -46,7 +46,7 @@ update_SegTree (SegTree depth vec) !i !x = loop ((1 `shiftL` depth) + i) x
 {-# INLINE update_SegTree #-}
 
 new_SegTree :: (Monoid a, GM.MVector mvec a, PrimMonad m) => Int -> m (SegTree mvec (PrimState m) a)
-new_SegTree n = do let depth = ceiling (logBase 2 (fromIntegral n) :: Double) :: Int
+new_SegTree n = do let depth = ceil_log2 n
                    vec <- GM.replicate ((1 `shiftL` (depth + 1)) - 1) mempty
                    return (SegTree depth vec)
 {-# INLINE new_SegTree #-}
@@ -56,3 +56,7 @@ asBoxedSegTree = id
 
 asUnboxedSegTree :: (PrimMonad m) => m (SegTree UM.MVector (PrimState m) a) -> m (SegTree UM.MVector (PrimState m) a)
 asUnboxedSegTree = id
+
+ceil_log2 :: Int -> Int
+ceil_log2 0 = 0
+ceil_log2 x = finiteBitSize x - countLeadingZeros (x - 1)

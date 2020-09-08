@@ -2,6 +2,8 @@
 module MergeSort where
 import qualified Data.Vector.Unboxed as U
 import qualified Data.Vector.Unboxed.Mutable as UM
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Algorithms.Merge as A
 
 mergeSortBy :: (U.Unbox a) => (a -> a -> Ordering) -> U.Vector a -> U.Vector a
 mergeSortBy !cmp !vec = doSort vec
@@ -31,3 +33,10 @@ mergeSortBy !cmp !vec = doSort vec
 
 mergeSort :: (U.Unbox a, Ord a) => U.Vector a -> U.Vector a
 mergeSort = mergeSortBy compare
+
+sortVector :: (G.Vector v a, Ord a) => v a -> v a
+sortVector v = G.create do
+  v' <- G.thaw v
+  A.sort v'
+  return v'
+{-# INLINE sortVector #-}

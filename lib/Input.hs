@@ -6,6 +6,7 @@ import qualified Data.Vector.Unboxed as U
 import qualified Data.Vector.Unboxed.Mutable as UM
 import qualified Data.ByteString.Char8 as BS
 import Data.Bifunctor (first)
+import Data.Int (Int64)
 
 main = do
   _ :: [Int] <- map (read . BS.unpack) . BS.words <$> BS.getLine

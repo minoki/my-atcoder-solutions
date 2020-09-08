@@ -12,7 +12,7 @@ import qualified Data.Vector.Mutable as VM
 import qualified Data.Vector.Unboxed.Mutable as UM
 
 --
--- Binary Indexed Tree (BIT)
+-- Binary Indexed Tree (BIT), or Fenwick Tree
 --
 
 type CommutativeMonoid a = Monoid a

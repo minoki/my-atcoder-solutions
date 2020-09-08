@@ -38,7 +38,7 @@ fromIntegral_Int64_N n | 0 <= n && n < modulo = N n
                        | otherwise = N (n `mod` modulo)
 
 {-# RULES
-"fromIntegral/Int->N" fromIntegral = fromIntegral_Int64_N . fromIntegral
+"fromIntegral/Int->N" fromIntegral = fromIntegral_Int64_N . (fromIntegral :: Int -> Int64)
 "fromIntegral/Int64->N" fromIntegral = fromIntegral_Int64_N
  #-}
 
