@@ -350,3 +350,22 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [x] B - Picking Balls
 * [x] C - Numbering Blocks
 * [x] D - Calculating GCD
+
+## AtCoder Library Practice Contest
+
+<https://atcoder.jp/contests/practice2>
+
+* [x] A - Disjoint Set Union
+    * Union Find
+* [x] B - Fenwick Tree
+    * Fenwick Tree, or Binary Indexed Tree
+* [ ] C - Floor Sum
+* [ ] D - Maxflow
+* [ ] E - MinCostFlow
+* [ ] F - Convolution
+* [ ] G - SCC
+* [ ] H - Two SAT
+* [ ] I - Number of Substrings
+* [ ] J - Segment Tree
+* [ ] K - Range Affine Range Sum
+* [ ] L - Lazy Segment Tree
