@@ -359,7 +359,7 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
     * Union Find
 * [x] B - Fenwick Tree
     * Fenwick Tree, or Binary Indexed Tree
-* [ ] C - Floor Sum
+* [x] C - Floor Sum
 * [ ] D - Maxflow
 * [ ] E - MinCostFlow
 * [ ] F - Convolution
