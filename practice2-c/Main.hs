@@ -33,6 +33,19 @@ floorSum !n !m !a !b
     floorSum_positive :: Int64 -> Int64 -> Int64 -> Int64 -> Int64 -> Int64
     floorSum_positive !acc !n !m !a !b
       | n == 0 = acc
+      | otherwise =
+        let m2 = m `quot` 2
+            (q, a') = (a + m2) `quotRem` m
+            (a'',b'') = if a' < m2 then
+                          (m2 - a', b - (m2 - a') * (n - 1))
+                        else
+                          (a' - m2, b)
+            -- 0 <= a'' < m `quot` 2 < m
+            (q', b''') = b'' `divMod` m
+            t = (a'' * (n - 1) + b''') `div` m
+            -- t <= (m * (m - 1) + m) `div` m = m
+        in floorSum_positive (acc + q * comb2 n + n * (q' + t)) t a'' m (b''' - m * t)
+      {-
       | let m2 = m `quot` 2, a > m2 =
               let (q, a') = (a + m2) `quotRem` m
                   (a'',b'') = if a' < m2 then
@@ -45,6 +58,7 @@ floorSum !n !m !a !b
               t = (a * (n - 1) + b') `div` m
               -- t <= (m * (m - 1) + m) `div` m = m
           in floorSum_positive (acc + n * (q + t)) t a m (b' - m * t)
+-}
 
 floorSum_naive :: Int64 -> Int64 -> Int64 -> Int64 -> Integer
 floorSum_naive n m a b = sum [ floor ((toInteger a * toInteger i + toInteger b) % toInteger m) | i <- [0..n-1] ]
