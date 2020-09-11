@@ -20,16 +20,11 @@ comb2 n = (n `shiftR` 1) * ((n - 1) .|. 1)
 -- floorSum n m a b
 -- Assumptions:
 -- * n: non-negative, m: positive
+-- * a and b can be negative, or >= m
 floorSum :: Int64 -> Int64 -> Int64 -> Int64 -> Int64
 floorSum !n !m !a !b
   | assert (n >= 0 && m > 0) False = undefined
-  | a < 0 = floorSum n m (- a) (b + a * (n - 1))
-  {-
-  | m < n = case n `quotRem` m of
-              (q, n') -> (q * n - comb2 (q + 1) * m) * a +
-                         q * floorSum_positive 0 m m a b +
-                         floorSum_positive 0 n' m a b
--}
+  | a < 0 = floorSum_positive 0 n m (- a) (b + a * (n - 1))
   | otherwise = floorSum_positive 0 n m a b
   where
     -- Invariants:
@@ -37,9 +32,7 @@ floorSum !n !m !a !b
     -- * 0 <= n <= m
     floorSum_positive :: Int64 -> Int64 -> Int64 -> Int64 -> Int64 -> Int64
     floorSum_positive !acc !n !m !a !b
-      | a == 0 = acc + n * (b `div` m)
       | n == 0 = acc
-      | m == 1 = acc + a * comb2 n + b * n
       | let m2 = m `quot` 2, a > m2 =
               let (q, a') = (a + m2) `quotRem` m
                   (a'',b'') = if a' < m2 then
