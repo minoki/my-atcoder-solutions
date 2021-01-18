@@ -369,3 +369,11 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [ ] J - Segment Tree
 * [ ] K - Range Affine Range Sum
 * [ ] L - Lazy Segment Tree
+
+## AtCoder Typical Contest 001
+
+<https://atcoder.jp/contests/atc001>
+
+* [ ] A - 深さ優先探索
+* [ ] B - Union Find
+* [x] C - 高速フーリエ変換
