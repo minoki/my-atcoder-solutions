@@ -27,7 +27,12 @@ dependencies:
 - mtl
 - bytestring
 - text
+- deepseq
 - primitive
+- reflection
+- unboxing-vector
+- vector-algorithms
+- QuickCheck
 
 ghc-options:
 # Maximum heap size: 1GiB
