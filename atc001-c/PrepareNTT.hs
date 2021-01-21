@@ -1,8 +1,12 @@
 -- https://github.com/minoki/my-atcoder-solutions
 {-# LANGUAGE BangPatterns          #-}
+{-# LANGUAGE DataKinds             #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE NoStarIsType          #-}
 {-# LANGUAGE ScopedTypeVariables   #-}
 {-# LANGUAGE TypeApplications      #-}
+{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE TypeOperators         #-}
 import           Control.Exception           (assert)
 import           Control.Monad
 import           Data.Bits
@@ -13,25 +17,41 @@ import           Data.Complex
 import           Data.Int                    (Int64)
 import           Data.List                   (unfoldr)
 import qualified Data.Vector.Generic         as G
-import qualified Data.Vector.Unboxed         as U
-import qualified Data.Vector.Unboxed.Mutable as UM
+import qualified Data.Vector.Unboxing         as U
+import qualified Data.Vector.Unboxing.Mutable as UM
+import           GHC.TypeNats                (type (+), type (*), KnownNat, Nat, type (^),
+                                              natVal)
+
+type R1 = IntMod (5 * 2^25 + 1)
+type R2 = IntMod (7 * 2^26 + 1)
+type R3 = IntMod (3 * 2^18 + 1)
+type R4 = IntMod (7 * 2^20 + 1)
+type R5 = IntMod (483 * 2^21 + 1)
+
+order :: (Num a, Eq a) => a -> Int
+order !x = go 1 x
+  where
+    go !n 1 = n
+    go !n y = go (n + 1) (x * y)
+
+order' :: (Num a, Eq a) => Int -> a -> Int
+order' !m !x = go 1 x
+  where
+    go !n 1 = n
+    go !n y | n > m = m + 1
+    go !n y = go (n + 1) (x * y)
+
+findPrimitiveNthRoot :: (Num a, Eq a) => Int -> a
+findPrimitiveNthRoot n = head [ x | k <- [1..], let x = fromInteger k, order' n x == n ]
 
 main = do
-  n <- readLn @Int -- n <= 10^5
-  (as,bs) <- fmap U.unzip $ U.replicateM n $ do
-    [a,b] <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
-    return (a,b)
-  let p, q :: Poly U.Vector Int
-      p = Poly $ normalizePoly (0 `U.cons` as)
-      q = Poly $ normalizePoly (0 `U.cons` bs)
-      -- v = coeffAsc (p * q)
-      !v = coeffAsc p `mulFFT` coeffAsc q
-      !l = U.length v
-  forM_ [1..2*n] $ \k -> do
-    print $ if k < l then
-              v U.! k
-            else
-              0
+  -- print (findPrimitiveNthRoot 2)
+  -- print (findPrimitiveNthRoot (2^10))
+  print (findPrimitiveNthRoot (2^25) :: R1) -- 17 mod 5 * 2^25 + 1
+  print (findPrimitiveNthRoot (2^26) :: R2) -- 30 mod 7 * 2^26 + 1
+  print (findPrimitiveNthRoot (2^18) :: R3) -- 5 mod 3 * 2^18 + 1
+  print (findPrimitiveNthRoot (2^20) :: R4) -- 5 mod 7 * 2^20 + 1
+  print (findPrimitiveNthRoot (2^21) :: R5) -- 198 mod 483 * 2^21 + 1
 
 --
 -- Fast Fourier Transform (FFT)
@@ -226,3 +246,79 @@ divModPoly f g@(Poly w)
 divModByDeg1 :: (Eq a, Num a, G.Vector vec a) => Poly vec a -> a -> (Poly vec a, a)
 divModByDeg1 f t = let w = G.postscanr (\a b -> a + b * t) 0 $ coeffAsc f
                    in (Poly (G.tail w), G.head w)
+
+--
+-- Modular Arithmetic
+--
+
+newtype IntMod (m :: Nat) = IntMod { unwrapN :: Int64 } deriving (Eq)
+
+instance Show (IntMod m) where
+  show (IntMod x) = show x
+
+instance KnownNat m => Num (IntMod m) where
+  t@(IntMod x) + IntMod y
+    | x + y >= modulus = IntMod (x + y - modulus)
+    | otherwise = IntMod (x + y)
+    where modulus = fromIntegral (natVal t)
+  t@(IntMod x) - IntMod y
+    | x >= y = IntMod (x - y)
+    | otherwise = IntMod (x - y + modulus)
+    where modulus = fromIntegral (natVal t)
+  t@(IntMod x) * IntMod y = IntMod ((x * y) `rem` modulus)
+    where modulus = fromIntegral (natVal t)
+  fromInteger n = let result = IntMod (fromInteger (n `mod` fromIntegral modulus))
+                      modulus = natVal result
+                  in result
+  abs = undefined; signum = undefined
+
+{-# RULES
+"^9/Int" forall x. x ^ (9 :: Int) = let u = x; v = u * u * u in v * v * v
+"^9/Integer" forall x. x ^ (9 :: Integer) = let u = x; v = u * u * u in v * v * v
+ #-}
+
+fromIntegral_Int64_IntMod :: KnownNat m => Int64 -> IntMod m
+fromIntegral_Int64_IntMod n = result
+  where
+    result | 0 <= n && n < modulus = IntMod n
+           | otherwise = IntMod (n `mod` modulus)
+    modulus = fromIntegral (natVal result)
+
+{-# RULES
+"fromIntegral/Int->IntMod" fromIntegral = fromIntegral_Int64_IntMod . (fromIntegral :: Int -> Int64) :: Int -> IntMod (10^9 + 7)
+"fromIntegral/Int64->IntMod" fromIntegral = fromIntegral_Int64_IntMod :: Int64 -> IntMod (10^9 + 7)
+ #-}
+
+instance U.Unboxable (IntMod m) where
+  type Rep (IntMod m) = Int64
+
+exEuclid :: (Eq a, Integral a) => a -> a -> (a, a, a)
+exEuclid !f !g = loop 1 0 0 1 f g
+  where loop !u0 !u1 !v0 !v1 !f 0 = (f, u0, v0)
+        loop !u0 !u1 !v0 !v1 !f g =
+          case divMod f g of
+            (q,r) -> loop u1 (u0 - q * u1) v1 (v0 - q * v1) g r
+
+instance KnownNat m => Fractional (IntMod m) where
+  recip t@(IntMod x) = IntMod $ case exEuclid x modulus of
+    (1,a,_)  -> a `mod` modulus
+    (-1,a,_) -> (-a) `mod` modulus
+    _        -> error "not invertible"
+    where modulus = fromIntegral (natVal t)
+  fromRational = undefined
+
+recipM :: (Eq a, Integral a, Show a) => a -> a -> a
+recipM !x modulo = case exEuclid x modulo of
+                     (1,a,_) -> a `mod` modulo
+                     (-1,a,_) -> (-a) `mod` modulo
+                     (g,a,b) -> error $ show x ++ "^(-1) mod " ++ show modulo ++ " failed: gcd=" ++ show g
+
+-- |
+-- >>> crt 3 6 2 7
+-- 9
+-- >>> crt 2 5 3 9
+-- 12
+crt :: Int64 -> Int64 -> Int64 -> Int64 -> Int64
+crt !a1 !m1 !a2 !m2 = let m1' = recipM m1 m2
+                          m2' = recipM m2 m1
+                      in (m2 * m2' * a1 + m1 * m1' * a2) `mod` (m1 * m2)
