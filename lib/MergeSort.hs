@@ -35,7 +35,7 @@ mergeSort :: (U.Unbox a, Ord a) => U.Vector a -> U.Vector a
 mergeSort = mergeSortBy compare
 
 sortVector :: (G.Vector v a, Ord a) => v a -> v a
-sortVector v = G.create do
+sortVector v = G.create $ do
   v' <- G.thaw v
   A.sort v'
   return v'
