@@ -10,23 +10,22 @@
 {-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE TypeOperators              #-}
 {-# LANGUAGE UndecidableInstances       #-}
-import           Control.Exception            (assert)
-import           Control.Monad
+import           Control.Exception       (assert)
 import           Data.Bits
-import qualified Data.ByteString.Char8        as BS
-import           Data.Char                    (isSpace)
+import qualified Data.ByteString.Builder as BSB
+import qualified Data.ByteString.Char8   as BS
+import           Data.Char               (isSpace)
 import           Data.Coerce
-import           Data.Complex
-import           Data.Int                     (Int64)
-import           Data.List                    (unfoldr)
+import           Data.Int                (Int64)
+import           Data.List               (unfoldr)
 import           Data.Proxy
-import qualified Data.Vector.Generic          as G
-import qualified Data.Vector.Unboxing         as U
-import qualified Data.Vector.Unboxing.Mutable as UM
-import           GHC.TypeNats                 (type (*), type (+), KnownNat,
-                                               Nat, SomeNat (..), type (^),
-                                               natVal, someNatVal)
-import qualified Test.QuickCheck              as QC
+import qualified Data.Vector.Generic     as G
+import qualified Data.Vector.Unboxing    as U
+import           GHC.TypeNats            (type (*), type (+), KnownNat, Nat,
+                                          SomeNat (..), type (^), natVal,
+                                          someNatVal)
+import           System.IO               (stdout)
+import qualified Test.QuickCheck         as QC
 
 main = do
   n <- readLn @Int -- n <= 10^5
@@ -40,11 +39,13 @@ main = do
       -- v = coeffAsc (p * q)
       !v = coeffAsc p `mulFFTInt` coeffAsc q
       !l = U.length v
-  forM_ [1..2*n] $ \k -> do
-    print $ if k < l then
-              v U.! k -- <= 10^9
-            else
-              0
+  BSB.hPutBuilder stdout $ mconcat
+    [ if k < l then
+        BSB.int64Dec (v U.! k) <> BSB.char8 '\n' -- <= 10^9
+      else
+        BSB.string8 "0\n"
+    | k <- [1..2*n]
+    ]
 
 --
 -- Fast Fourier Transform (FFT)

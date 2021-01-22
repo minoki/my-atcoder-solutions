@@ -6,6 +6,7 @@
 import           Control.Exception           (assert)
 import           Control.Monad
 import           Data.Bits
+import qualified Data.ByteString.Builder     as BSB
 import qualified Data.ByteString.Char8       as BS
 import           Data.Char                   (isSpace)
 import           Data.Coerce
@@ -15,6 +16,7 @@ import           Data.List                   (unfoldr)
 import qualified Data.Vector.Generic         as G
 import qualified Data.Vector.Unboxed         as U
 import qualified Data.Vector.Unboxed.Mutable as UM
+import           System.IO                   (stdout)
 
 main = do
   n <- readLn @Int -- n <= 10^5
@@ -27,11 +29,13 @@ main = do
       -- v = coeffAsc (p * q)
       !v = coeffAsc p `mulFFT` coeffAsc q
       !l = U.length v
-  forM_ [1..2*n] $ \k -> do
-    print $ if k < l then
-              v U.! k
-            else
-              0
+  BSB.hPutBuilder stdout $ mconcat
+    [ if k < l then
+        BSB.intDec (v U.! k) <> BSB.char8 '\n' -- <= 10^9
+      else
+        BSB.string8 "0\n"
+    | k <- [1..2*n]
+    ]
 
 --
 -- Fast Fourier Transform (FFT)
