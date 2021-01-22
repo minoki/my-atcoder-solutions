@@ -10,22 +10,24 @@
 {-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE TypeOperators              #-}
 {-# LANGUAGE UndecidableInstances       #-}
-import           Control.Exception       (assert)
+import           Control.Exception            (assert)
 import           Data.Bits
-import qualified Data.ByteString.Builder as BSB
-import qualified Data.ByteString.Char8   as BS
-import           Data.Char               (isSpace)
+import qualified Data.ByteString.Builder      as BSB
+import qualified Data.ByteString.Char8        as BS
+import           Data.Char                    (isSpace)
 import           Data.Coerce
-import           Data.Int                (Int64)
-import           Data.List               (unfoldr)
+import           Data.Int                     (Int64)
+import           Data.List                    (unfoldr)
 import           Data.Proxy
-import qualified Data.Vector.Generic     as G
-import qualified Data.Vector.Unboxing    as U
-import           GHC.TypeNats            (type (*), type (+), KnownNat, Nat,
-                                          SomeNat (..), type (^), natVal,
-                                          someNatVal)
-import           System.IO               (stdout)
-import qualified Test.QuickCheck         as QC
+import qualified Data.Vector.Generic          as G
+import qualified Data.Vector.Generic.Mutable  as GM
+import qualified Data.Vector.Unboxing         as U
+import qualified Data.Vector.Unboxing.Mutable as UM
+import           GHC.TypeNats                 (type (*), type (+), KnownNat,
+                                               Nat, SomeNat (..), type (^),
+                                               natVal, someNatVal)
+import           System.IO                    (stdout)
+import qualified Test.QuickCheck              as QC
 
 main = do
   n <- readLn @Int -- n <= 10^5
@@ -66,8 +68,22 @@ fft (u:u2) f | n == 1 = f
                                r1' = G.generate n2 $ \j -> ((f G.! j) - (f G.! (j + n2))) * u G.! j
                                !t0 = fft u2 r0
                                !t1' = fft u2 r1'
-                           in G.generate n $ \j -> if even j then t0 G.! (j `quot` 2) else t1' G.! (j `quot` 2)
+                           in -- G.generate n $ \j -> if even j then t0 G.! (j `quot` 2) else t1' G.! (j `quot` 2)
+                              G.create $ do
+                                v <- GM.new n
+                                G.imapM_ (\i -> GM.write v (2 * i)) t0
+                                G.imapM_ (\i -> GM.write v (2 * i + 1)) t1'
+                                return v
   where n = G.length f
+{-# SPECIALIZE fft :: [U.Vector R5] -> U.Vector R5 -> U.Vector R5 #-}
+
+zeroExtend :: (Num a, U.Unboxable a) => Int -> U.Vector a -> U.Vector a
+zeroExtend n v | U.length v >= n = v
+               | otherwise = U.create $ do
+                   w <- UM.replicate n 0
+                   U.copy (UM.take (U.length v) w) v
+                   return w
+{-# SPECIALIZE zeroExtend :: Int -> U.Vector R5 -> U.Vector R5 #-}
 
 mulFFT :: forall a. (U.Unboxable a, Fractional a, PrimitiveRoot a) => U.Vector a -> U.Vector a -> U.Vector a
 mulFFT !f !g = let n' = U.length f + U.length g - 2
@@ -75,25 +91,17 @@ mulFFT !f !g = let n' = U.length f + U.length g - 2
                    !_ = assert (n' < 2^k) ()
                    n = bit k
                    u0 = nthRoot n
-                   u :: U.Vector a
-                   u = U.iterateN n (* u0) 1
-                   us = iterate halve u
-                   f' = U.generate n $ \j -> if j < U.length f then
-                                               f U.! j
-                                             else
-                                               0
-                   g' = U.generate n $ \j -> if j < U.length g then
-                                               g U.! j
-                                             else
-                                               0
-                   f'' = fft us f'
-                   g'' = fft us g'
+                   us :: [U.Vector a]
+                   us = iterate halve $ U.iterateN n (* u0) 1
+                   f'' = fft us (zeroExtend n f)
+                   g'' = fft us (zeroExtend n g)
                    v0 = recip u0
-                   v :: U.Vector a
-                   v = U.iterateN n (* v0) 1
-                   fg = U.generate n $ \j -> (f'' U.! j) * (g'' U.! j)
-                   fg' = fft (iterate halve v) fg
-               in U.generate n $ \j -> (fg' U.! j) / fromIntegral n
+                   vs :: [U.Vector a]
+                   vs = iterate halve $ U.iterateN n (* v0) 1
+                   fg' = fft vs (U.zipWith (*) f'' g'')
+                   !recip_n = recip (fromIntegral n)
+               in U.map (* recip_n) fg'
+{-# SPECIALIZE mulFFT :: U.Vector R5 -> U.Vector R5 -> U.Vector R5 #-}
 
 {-
 mulFFTInt :: U.Vector Int -> U.Vector Int -> U.Vector Int64
@@ -135,6 +143,7 @@ instance PrimitiveRoot R1 where
                                    in 17 ^ (2^(25 - k) :: Int)
             | otherwise = error "nthRoot: not implemented"
 
+-- Z / 1012924417 Z
 newtype R2 = R2 { unwrapR2 :: IntMod (7 * 2^26 + 1) } deriving newtype (Eq, Show, Num, Fractional, U.Unboxable)
 
 instance PrimitiveRoot R2 where
@@ -334,6 +343,7 @@ instance KnownNat m => Num (IntMod m) where
                       modulus = natVal result
                   in result
   abs = undefined; signum = undefined
+  {-# SPECIALIZE instance Num (IntMod 1012924417) #-}
 
 {-# RULES
 "^9/Int" forall x. x ^ (9 :: Int) = let u = x; v = u * u * u in v * v * v
