@@ -62,3 +62,9 @@ instance Fractional N where
   (/) = coerce divM
   recip = coerce recipM
   fromRational = undefined
+
+{-
+import qualified Data.Vector.Unboxing  as U
+instance U.Unboxable N where
+  type Rep N = Int64
+-}
