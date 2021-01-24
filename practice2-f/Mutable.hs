@@ -18,6 +18,7 @@ import qualified Data.ByteString.Char8        as BS
 import           Data.Char                    (isSpace)
 import           Data.Int                     (Int64)
 import           Data.List
+import Data.Word
 import qualified Data.Vector.Generic          as G
 import qualified Data.Vector.Generic.Mutable  as GM
 import qualified Data.Vector.Unboxing         as U
@@ -44,30 +45,60 @@ halve v = let n = G.length v
 
 fftM :: forall vec a s. (Num a, G.Vector vec a)
      => [vec a] -- ^ For a primitive n-th root of unity @u@, @iterate halve [1,u,u^2 .. u^(n-1)]@
-     -> vec a -- ^ a polynomial of length n (= 2^k for some k)
-     -> Int
-     -> G.Mutable vec s a
+     -> G.Mutable vec s a -- ^ a vector of length n (= 2^k for some k)
      -> ST s ()
-fftM (!u:u2) !f !s !dest
-  | n == 1 = GM.write dest 0 (G.head f)
-  | otherwise = let !n2 = n `quot` 2
-                    r0, r1' :: vec a
-                    r0 = G.generate n2 $ \j -> (f G.! j) + (f G.! (j + n2))
-                    r1' = G.generate n2 $ \j -> ((f G.! j) - (f G.! (j + n2))) * u G.! j
-                in do fftM u2 r0 (2 * s) dest
-                      fftM u2 r1' (2 * s) (GM.drop s dest)
-  where n = G.length f
-{-# SPECIALIZE fftM :: [U.Vector R] -> U.Vector R -> Int -> UM.MVector s R -> ST s () #-}
+fftM (!u:u2) !f
+  | n == 1 = return ()
+  | otherwise = do let !n2 = n `quot` 2
+                   forM_ [0..n2-1] $ \j -> do
+                     !fj <- GM.read f j
+                     !fj' <- GM.read f (j + n2)
+                     GM.write f j $! fj + fj'
+                     GM.write f (j + n2) $! (fj - fj') * u G.! j
+                   let !(r0,r1') = GM.splitAt n2 f
+                   fftM u2 r0
+                   fftM u2 r1'
+  where n = GM.length f
+{-# SPECIALIZE fftM :: [U.Vector R] -> UM.MVector s R -> ST s () #-}
 
 fft :: forall vec a. (Num a, G.Vector vec a)
     => [vec a] -- ^ For a primitive n-th root of unity @u@, @iterate halve [1,u,u^2 .. u^(n-1)]@
     -> vec a -- ^ a polynomial of length n (= 2^k for some k)
     -> vec a
 fft us f = G.create $ do
-  dest <- GM.new (G.length f)
-  fftM us f 1 dest
-  return dest
-{-# SPECIALIZE fft :: [U.Vector R] -> U.Vector R -> U.Vector R #-}
+  let !n = G.length f
+  f' <- G.thaw f
+  fftM us f'
+  let !k = countTrailingZeros n
+  forM_ [0..n-1] $ \i -> do
+    let j = fromIntegral (bitRevN k (fromIntegral i))
+    when (i < j) $ GM.swap f' i j
+  return f'
+{-# INLINE fft #-}
+
+bitRevN :: Int -> Word -> Word
+bitRevN w x = bitReverse x `shiftR` (finiteBitSize x - w)
+
+bitReverse :: Word -> Word
+bitReverse x = case finiteBitSize x of
+                 32 -> fromIntegral (bitReverse32 (fromIntegral x))
+                 64 -> fromIntegral (bitReverse64 (fromIntegral x))
+                 _ -> error "bitReverse: unsupported word size"
+
+bitReverse32 :: Word32 -> Word32
+bitReverse32 !x0 = let !x1 = ((x0 .&. 0xaaaaaaaa) `shiftR` 1) .|. ((x0 .&. 0x55555555) `shiftL` 1)
+                       !x2 = ((x1 .&. 0xcccccccc) `shiftR` 2) .|. ((x1 .&. 0x33333333) `shiftL` 2)
+                       !x3 = ((x2 .&. 0xf0f0f0f0) `shiftR` 4) .|. ((x2 .&. 0x0f0f0f0f) `shiftL` 4)
+                       !x4 = ((x3 .&. 0xff00ff00) `shiftR` 8) .|. ((x3 .&. 0x00ff00ff) `shiftL` 8)
+                   in (x4 `shiftR` 16) .|. (x4 `shiftL` 16)
+
+bitReverse64 :: Word64 -> Word64
+bitReverse64 !x0 = let !x1 = ((x0 .&. 0xaaaaaaaaaaaaaaaa) `shiftR` 1) .|. ((x0 .&. 0x5555555555555555) `shiftL` 1)
+                       !x2 = ((x1 .&. 0xcccccccccccccccc) `shiftR` 2) .|. ((x1 .&. 0x3333333333333333) `shiftL` 2)
+                       !x3 = ((x2 .&. 0xf0f0f0f0f0f0f0f0) `shiftR` 4) .|. ((x2 .&. 0x0f0f0f0f0f0f0f0f) `shiftL` 4)
+                       !x4 = ((x3 .&. 0xff00ff00ff00ff00) `shiftR` 8) .|. ((x3 .&. 0x00ff00ff00ff00ff) `shiftL` 8)
+                       !x5 = ((x4 .&. 0xffff0000ffff0000) `shiftR` 16) .|. ((x4 .&. 0x0000ffff0000ffff) `shiftL` 16)
+                   in (x5 `shiftR` 32) .|. (x5 `shiftL` 32)
 
 zeroExtend :: (Num a, U.Unboxable a) => Int -> U.Vector a -> U.Vector a
 zeroExtend n v | U.length v >= n = v
@@ -75,7 +106,7 @@ zeroExtend n v | U.length v >= n = v
                    w <- UM.replicate n 0
                    U.copy (UM.take (U.length v) w) v
                    return w
-{-# SPECIALIZE zeroExtend :: Int -> U.Vector R -> U.Vector R #-}
+{-# INLINE zeroExtend #-}
 
 mulFFT :: forall a. (U.Unboxable a, Fractional a, PrimitiveRoot a) => U.Vector a -> U.Vector a -> U.Vector a
 mulFFT !f !g = let n' = U.length f + U.length g - 2
@@ -147,10 +178,18 @@ instance KnownNat m => Num (IntMod m) where
     where modulus = fromIntegral (natVal t)
   t@(IntMod x) * IntMod y = IntMod ((x * y) `rem` modulus)
     where modulus = fromIntegral (natVal t)
+  negate t@(IntMod x) | x == 0 = t
+                      | otherwise = IntMod (modulus - x)
+    where modulus = fromIntegral (natVal t)
   fromInteger n = let result = IntMod (fromInteger (n `mod` fromIntegral modulus))
                       modulus = natVal result
                   in result
   abs = undefined; signum = undefined
+  {-# INLINE (+) #-}
+  {-# INLINE (-) #-}
+  {-# INLINE (*) #-}
+  {-# INLINE negate #-}
+  {-# INLINE fromInteger #-}
   {-# SPECIALIZE instance Num (IntMod 998244353) #-}
 
 fromIntegral_Int64_IntMod :: KnownNat m => Int64 -> IntMod m
