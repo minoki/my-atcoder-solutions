@@ -377,3 +377,12 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [ ] A - 深さ優先探索
 * [ ] B - Union Find
 * [x] C - 高速フーリエ変換
+
+## AtCoder Regular Contest 033
+
+<https://atcoder.jp/contests/arc033>
+
+* [ ] A - 隠れた言葉
+* [ ] B - メタ構文変数
+* [ ] C - データ構造
+* [x] D - 見たことのない多項式
