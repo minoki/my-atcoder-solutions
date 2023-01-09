@@ -386,3 +386,16 @@ Haskellで競技プログラミングをやるテクニックは「[Haskellで�
 * [ ] B - メタ構文変数
 * [ ] C - データ構造
 * [x] D - 見たことのない多項式
+
+## AtCoder Beginner Contest 284
+
+<https://atcoder.jp/contests/abc284>
+
+* [ ] A - Sequence of Strings
+* [ ] B - Multi Test Cases
+* [ ] C - Count Connected Components
+* [x] D - Happy New Year 2023
+* [ ] E - Count Simple Paths
+* [ ] F - ABCBAC
+* [ ] G - Only Once
+* [ ] Ex - Count Unlabeled Graphs

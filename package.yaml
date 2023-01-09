@@ -33,6 +33,7 @@ dependencies:
 - unboxing-vector
 - vector-algorithms
 - QuickCheck
+- arithmoi
 
 ghc-options:
 # Maximum heap size: 1GiB
